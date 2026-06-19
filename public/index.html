@@ -539,7 +539,7 @@ function callTutor(word,morphParts,uhgContext){
   if (uhgContext) user += '\n\n--- CONTENIDO DEL unfoldingWord Hebrew Grammar (UHG) PARA ESTA CATEGORIA ---\n'+uhgContext.slice(0,3000)+'\n---';
   user += '\n\nExplica categoria gramatical, forma, significado en contexto y observacion exegetica relevante. Donde sea pertinente, integra informacion del UHG en tu explicacion.';
 
-  fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:system,messages:[{role:'user',content:user}]})})
+  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:system,messages:[{role:'user',content:user}]})})
     .then(function(resp){ return resp.json(); })
     .then(function(data){
       var text = (data.content && data.content[0] && data.content[0].text) || 'No se pudo obtener explicacion.';
@@ -575,7 +575,7 @@ function askFollowUp(){
   var word=idx>=0?currentWords[idx]:null;
   var ctx = word ? ('La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+(currentRef?currentRef.display:'')+' '+(currentRef?currentRef.ch:'')+':'+(currentRef?currentRef.vs:'')+'.') : '';
 
-  fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Eres Mevin, tutor experto en hebreo biblico. Responde en espanol, max 150 palabras, pedagogico y directo. Puedes citar el UHG o Gesenius si es relevante.',messages:[{role:'user',content:ctx+'\n\nPregunta: '+q}]})})
+  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Eres Mevin, tutor experto en hebreo biblico. Responde en espanol, max 150 palabras, pedagogico y directo. Puedes citar el UHG o Gesenius si es relevante.',messages:[{role:'user',content:ctx+'\n\nPregunta: '+q}]})})
     .then(function(resp){ return resp.json(); })
     .then(function(data){
       var text = (data.content && data.content[0] && data.content[0].text) || '-';
