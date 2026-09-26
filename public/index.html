@@ -121,7 +121,7 @@
   <div class="topbar-inner">
     <a class="brand" href="#"><span class="brand-heb">&#1502;&#1461;&#1489;&#1460;&#1503;</span><span class="brand-name">Mevin</span><span class="brand-badge" data-i18n="badge">hebreo bíblico</span></a>
     <div class="topbar-right">
-      <span class="topbar-desc">WLC · OSHB · UHG · Gesenius · SHEBANQ · KJV / TBI / BIMK</span>
+      <span class="topbar-desc" id="topDesc">WLC · OSHB · UHG · Gesenius · SHEBANQ</span>
       <div class="lang-toggle" role="group" aria-label="Idioma / Bahasa">
         <button class="lang-btn" data-lang="es" type="button">ES</button>
         <button class="lang-btn" data-lang="id" type="button">ID</button>
@@ -136,14 +136,7 @@
       <div class="card-label" data-i18n="refLabel">Referencia bíblica</div>
       <div class="search-row">
         <input class="ref-input" id="refInput" type="text" value="Gen 1:1"/>
-        <select class="version-select" id="versionSel">
-          <option value="all">WLC + KJV + TBI + BIMK</option>
-          <option value="idn">WLC + TBI + BIMK</option>
-          <option value="kjv">WLC + KJV</option>
-          <option value="tb">WLC + TBI</option>
-          <option value="bimk">WLC + BIMK</option>
-          <option value="wlc" data-i18n="onlyWLC">Solo WLC</option>
-        </select>
+        <select class="version-select" id="versionSel"></select>
         <button class="btn" id="loadBtn" data-i18n="load">Cargar</button>
       </div>
       <div class="quick-tags" id="quickTags"></div>
@@ -169,7 +162,7 @@ var I18N={
     badge:'hebreo bíblico', refLabel:'Referencia bíblica', placeholder:'Ej: Gen 1:1', load:'Cargar', onlyWLC:'Solo WLC',
     empty:'Carga un versículo y haz clic en cualquier palabra hebrea para ver su análisis morfológico.',
     loading:'Cargando...', hint:'Haz clic en una palabra para analizarla', loadingTrans:'Cargando traducciones...',
-    transNA:'No disponible.', refBad:'Referencia no reconocida. Intenta: Gen 1:1, Sal 23:1, Is 53:5',
+    transNA:'No disponible.', rvrNA:'La RVR60 no está disponible en tu cuenta de API.Bible.', refBad:'Referencia no reconocida. Intenta: Gen 1:1, Sal 23:1, Is 53:5',
     fileNF:'Archivo no encontrado: ', chNF:'Capítulo no encontrado: ', vsNF:'Versículo no encontrado: ', errPrefix:'Error: ',
     lexeme:'Lexema', code:'Código', refs:'Referencias',
     tutorLoading:'Consultando fuentes gramaticales...', askPh:'Pregunta a Mevin sobre esta palabra...', ask:'Preguntar',
@@ -182,13 +175,13 @@ var I18N={
     shbNote:'SHEBANQ identifica las palabras por el node ID interno del BHSA, no por el número Strong. Para ver los datos de esta palabra, abre SHEBANQ, ve al versículo indicado y haz clic sobre la palabra en el texto hebreo.',
     shbFeat:'Features BHSA disponibles (consultables en SHEBANQ vía MQL / Text-Fabric):',
     lblCat:'Categoría', lblStem:'Conjugación', lblTam:'Aspecto/TAM', lblPers:'Persona', lblGen:'Género', lblNum:'Número', lblState:'Estado', lblType:'Tipo',
-    footer:'<strong>Mevin</strong> usa el texto del <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> vía Open Scriptures Hebrew Bible (CC-BY 4.0). Gramática: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) y <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (dominio público). Análisis sintáctico: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV vía <a href="https://scripture.api.bible" target="_blank">API.Bible</a>; TB y BIMK © Lembaga Alkitab Indonesia, vía <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor IA: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
+    footer:'<strong>Mevin</strong> usa el texto del <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> vía Open Scriptures Hebrew Bible (CC-BY 4.0). Gramática: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) y <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (dominio público). Análisis sintáctico: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV y RVR60 vía <a href="https://scripture.api.bible" target="_blank">API.Bible</a> (RVR60 © Sociedades Bíblicas Unidas). NASB © The Lockman Foundation; TB y BIMK © Lembaga Alkitab Indonesia; ambas vía <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor IA: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
   },
   id:{
     badge:'Ibrani Alkitab', refLabel:'Referensi Alkitab', placeholder:'Mis. Kej 1:1', load:'Muat', onlyWLC:'Hanya WLC',
     empty:'Muat sebuah ayat, lalu klik kata Ibrani mana pun untuk melihat analisis morfologisnya.',
     loading:'Memuat...', hint:'Klik sebuah kata untuk menganalisisnya', loadingTrans:'Memuat terjemahan...',
-    transNA:'Tidak tersedia.', refBad:'Referensi tidak dikenali. Coba: Kej 1:1, Mzm 23:1, Yes 53:5',
+    transNA:'Tidak tersedia.', rvrNA:'RVR60 tidak tersedia di akun API.Bible Anda.', refBad:'Referensi tidak dikenali. Coba: Kej 1:1, Mzm 23:1, Yes 53:5',
     fileNF:'Berkas tidak ditemukan: ', chNF:'Pasal tidak ditemukan: ', vsNF:'Ayat tidak ditemukan: ', errPrefix:'Galat: ',
     lexeme:'Leksem', code:'Kode', refs:'Rujukan',
     tutorLoading:'Membaca sumber tata bahasa...', askPh:'Tanyakan kepada Mevin tentang kata ini...', ask:'Tanya',
@@ -202,7 +195,7 @@ var I18N={
     shbNote:'SHEBANQ mengenali kata berdasarkan node ID internal BHSA, bukan nomor Strong. Untuk melihat data kata ini, buka SHEBANQ, buka ayat tersebut, lalu klik kata itu pada teks Ibrani.',
     shbFeat:'Fitur BHSA yang tersedia (dapat ditelusuri di SHEBANQ melalui MQL / Text-Fabric):',
     lblCat:'Kategori', lblStem:'Konjugasi', lblTam:'Aspek/TAM', lblPers:'Persona', lblGen:'Gender', lblNum:'Jumlah', lblState:'Status', lblType:'Jenis',
-    footer:'<strong>Mevin</strong> menggunakan teks <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> melalui Open Scriptures Hebrew Bible (CC-BY 4.0). Tata bahasa: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) dan <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (domain publik). Analisis sintaksis: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV melalui <a href="https://scripture.api.bible" target="_blank">API.Bible</a>; TB dan BIMK © Lembaga Alkitab Indonesia, melalui <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor AI: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
+    footer:'<strong>Mevin</strong> menggunakan teks <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> melalui Open Scriptures Hebrew Bible (CC-BY 4.0). Tata bahasa: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) dan <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (domain publik). Analisis sintaksis: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV dan RVR60 melalui <a href="https://scripture.api.bible" target="_blank">API.Bible</a> (RVR60 © Sociedades Bíblicas Unidas). NASB © The Lockman Foundation; TB dan BIMK © Lembaga Alkitab Indonesia; keduanya melalui <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor AI: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
   }
 };
 function t(k,vars){
@@ -248,6 +241,13 @@ var BOOK_IDX={'gen':0,'gn':0,'genesis':0,'kej':0,'kejadian':0,
 'nah':33,'na':33,'nahum':33,'hab':34,'habacuc':34,'habakuk':34,
 'sof':35,'zeph':35,'zef':35,'zefanya':35,'hag':36,'hageo':36,'hagai':36,
 'zac':37,'zech':37,'zacarias':37,'za':37,'zak':37,'zakharia':37,'mal':38,'maleakhi':38};
+
+// Traducciones por idioma: español = KJV + RVR60; indonesio = NASB + TB + BIMK
+var VERSIONS={
+  es:[{v:'all',l:'WLC + KJV + RVR60',set:['KJV','RVR60']},{v:'kjv',l:'WLC + KJV',set:['KJV']},{v:'rvr',l:'WLC + RVR60',set:['RVR60']},{v:'wlc',l:'onlyWLC',set:[]}],
+  id:[{v:'all',l:'WLC + NASB + TB + BIMK',set:['NASB','TB','BIMK']},{v:'idn',l:'WLC + TB + BIMK',set:['TB','BIMK']},{v:'nasb',l:'WLC + NASB',set:['NASB']},{v:'tb',l:'WLC + TB',set:['TB']},{v:'bimk',l:'WLC + BIMK',set:['BIMK']},{v:'wlc',l:'onlyWLC',set:[]}]
+};
+function versionSet(mode){ var o=VERSIONS[LANG].filter(function(x){ return x.v===mode; })[0]; return o?o.set:[]; }
 
 var QUICK={es:['Gen 1:1','Dt 6:4','Sal 23:1','Is 53:5','Ex 20:2','Gn 3:15','Pro 3:5','Sal 119:1'],
            id:['Kej 1:1','Ul 6:4','Mzm 23:1','Yes 53:5','Kel 20:2','Kej 3:15','Ams 3:5','Mzm 119:1']};
@@ -465,28 +465,57 @@ function renderVerse(){
 // ─── TRADUCCIONES ────────────────────────────────────────────────────────────
 function loadTranslations(ref,mode){
   var ta=document.getElementById('transArea'); if(!ta) return;
-  if(mode==='wlc'){ ta.innerHTML=''; return; }
+  var set=versionSet(mode);
+  if(!set.length){ ta.innerHTML=''; return; }
   ta.innerHTML='<div class="trans-block"><span class="trans-loading">'+escHtml(t('loadingTrans'))+'</span></div>';
-  var jobs=[];
-  if(mode==='all'||mode==='kjv') jobs.push(fetchKJV(ref));
-  if(mode==='all'||mode==='idn'||mode==='tb') jobs.push(fetchSabda(ref,'tb','TBI'));
-  if(mode==='all'||mode==='idn'||mode==='bimk') jobs.push(fetchSabda(ref,'bis','BIMK'));
+  var jobs=set.map(function(label){
+    if(label==='KJV') return fetchKJV(ref);
+    if(label==='RVR60') return fetchRVR(ref);
+    if(label==='NASB') return fetchSabda(ref,'nasb','NASB');
+    if(label==='TB') return fetchSabda(ref,'tb','TB');
+    return fetchSabda(ref,'bis','BIMK');
+  });
   Promise.all(jobs).then(function(results){
     if(ref!==currentRef) return;
     var box=document.getElementById('transArea'); if(!box) return;
     box.innerHTML=results.map(function(r){
-      var body=r.text ? '<div class="trans-text'+(r.label!=='KJV'?' idn':'')+'">'+escHtml(r.text)+'</div>' : '<div class="trans-na">'+escHtml(t('transNA'))+'</div>';
+      var italic=(r.label!=='KJV'&&r.label!=='NASB');
+      var body=r.text ? '<div class="trans-text'+(italic?' idn':'')+'">'+escHtml(r.text)+'</div>' : '<div class="trans-na">'+escHtml(r.na||t('transNA'))+'</div>';
       return '<div class="trans-block"><div class="trans-label">'+r.label+'</div>'+body+'</div>';
     }).join('');
   });
 }
-function fetchKJV(ref){
-  var path='/bibles/'+KJV_ID+'/verses/'+ref.bookId+'.'+ref.ch+'.'+ref.vs+'?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false';
+function fetchApiBible(ref,bibleId,label){
+  var path='/bibles/'+bibleId+'/verses/'+ref.bookId+'.'+ref.ch+'.'+ref.vs+'?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false';
   return fetch('/api/bible?path='+encodeURIComponent(path))
     .then(function(r){ return r.ok?r.json():null; })
-    .then(function(d){ return {label:'KJV',text:(((d&&d.data&&d.data.content)||'').replace(/<[^>]+>/g,'').trim())}; })
-    .catch(function(){ return {label:'KJV',text:''}; });
+    .then(function(d){ return {label:label,text:(((d&&d.data&&d.data.content)||'').replace(/<[^>]+>/g,'').replace(/^\s*\d+\s*/,'').trim())}; })
+    .catch(function(){ return {label:label,text:''}; });
 }
+// La RVR60 se busca entre las Biblias en español disponibles en tu cuenta de API.Bible
+var RVR_ID=null, RVR_TRIED=false;
+function findRVR(){
+  if(RVR_TRIED) return Promise.resolve(RVR_ID);
+  return fetch('/api/bible?path='+encodeURIComponent('/bibles?language=spa'))
+    .then(function(r){ return r.ok?r.json():{data:[]}; })
+    .then(function(d){
+      RVR_TRIED=true;
+      ((d&&d.data)||[]).some(function(b){
+        var txt=[b.abbreviation,b.abbreviationLocal,b.name,b.nameLocal].join(' ').toUpperCase();
+        if(/RVR ?(19)?60|REINA[- ]VALERA 1960|REINA VALERA REVISADA 1960/.test(txt)){ RVR_ID=b.id; return true; }
+        return false;
+      });
+      return RVR_ID;
+    })
+    .catch(function(){ RVR_TRIED=true; return null; });
+}
+function fetchRVR(ref){
+  return findRVR().then(function(id){
+    if(!id) return {label:'RVR60',text:'',na:t('rvrNA')};
+    return fetchApiBible(ref,id,'RVR60');
+  });
+}
+function fetchKJV(ref){ return fetchApiBible(ref,KJV_ID,'KJV'); }
 function fetchSabda(ref,ver,label){
   var q='book='+encodeURIComponent(SABDA_ABBR[ref.idx])+'&ch='+ref.ch+'&vs='+ref.vs+'&ver='+ver;
   return fetch('/api/sabda?'+q)
@@ -652,12 +681,12 @@ function callTutor(word,morphParts,uhgContext,seq){
     user='Analisislah kata Ibrani ini dari teks Alkitab ('+refText(currentRef)+'):\n\nKata: '+word.text+'\nKode morfologi OSHB: '+(word.morph||'tidak tersedia')+'\nAnalisis: '+morphSummary+'\nStrong/Leksem: H'+word.lemma;
     if(trans) user+='\n\nTerjemahan ayat:\n'+trans;
     if(uhgContext) user+='\n\n--- KUTIPAN unfoldingWord Hebrew Grammar (UHG, bahasa Inggris) ---\n'+uhgContext.slice(0,3000)+'\n---';
-    user+='\n\nJelaskan kategori gramatikal, bentuk, makna dalam konteks, dan catatan eksegetis yang relevan. Bila sesuai, gunakan informasi dari UHG dan bandingkan dengan terjemahan TB/BIMK.';
+    user+='\n\nJelaskan kategori gramatikal, bentuk, makna dalam konteks, dan catatan eksegetis yang relevan. Bila sesuai, gunakan informasi dari UHG dan bandingkan dengan terjemahan NASB/TB/BIMK.';
   } else {
     user='Analiza esta palabra hebrea del texto bíblico ('+refText(currentRef)+'):\n\nPalabra: '+word.text+'\nCódigo morfológico OSHB: '+(word.morph||'no disponible')+'\nAnálisis: '+morphSummary+'\nStrong/Lexema: H'+word.lemma;
     if(trans) user+='\n\nTraducciones del versículo:\n'+trans;
     if(uhgContext) user+='\n\n--- EXTRACTO DEL unfoldingWord Hebrew Grammar (UHG) ---\n'+uhgContext.slice(0,3000)+'\n---';
-    user+='\n\nExplica categoría gramatical, forma, significado en contexto y una observación exegética relevante. Donde sea pertinente, integra información del UHG.';
+    user+='\n\nExplica categoría gramatical, forma, significado en contexto y una observación exegética relevante. Donde sea pertinente, integra información del UHG y compara con la KJV y la RVR60.';
   }
   callClaude(tutorSystem(false),user,1000)
     .then(function(text){ showTutor(renderMd(text),seq); })
@@ -692,6 +721,10 @@ function applyLang(){
   Array.prototype.slice.call(document.querySelectorAll('[data-i18n]')).forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
   document.getElementById('refInput').placeholder=t('placeholder');
   document.getElementById('footer').innerHTML=t('footer');
+  var sel=document.getElementById('versionSel'), prev=sel.value;
+  sel.innerHTML=VERSIONS[LANG].map(function(o){ return '<option value="'+o.v+'">'+escHtml(o.l==='onlyWLC'?t('onlyWLC'):o.l)+'</option>'; }).join('');
+  sel.value=VERSIONS[LANG].some(function(o){ return o.v===prev; })?prev:'all';
+  document.getElementById('topDesc').textContent='WLC · OSHB · UHG · Gesenius · SHEBANQ · '+(LANG==='id'?'NASB / TB / BIMK':'KJV / RVR60');
   Array.prototype.slice.call(document.querySelectorAll('.lang-btn')).forEach(function(b){ b.classList.toggle('active',b.dataset.lang===LANG); });
   document.getElementById('quickTags').innerHTML=QUICK[LANG].map(function(r){ return '<span class="tag" data-ref="'+r+'">'+r+'</span>'; }).join('');
   Array.prototype.slice.call(document.querySelectorAll('#quickTags .tag')).forEach(function(el){

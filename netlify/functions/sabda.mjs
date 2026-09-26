@@ -1,4 +1,4 @@
-// Proxy para Alkitab SABDA (TB y BIMK/BIS). Devuelve el texto de un versículo.
+// Proxy para Alkitab SABDA (TB, BIMK/BIS y NASB). Devuelve el texto de un versículo.
 // TB y BIMK: © Lembaga Alkitab Indonesia; texto servido por Yayasan Lembaga SABDA.
 const H = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
 
@@ -20,7 +20,7 @@ export default async (req) => {
   const ch = u.searchParams.get("ch");
   const vs = u.searchParams.get("vs");
   const ver = u.searchParams.get("ver");
-  if (!/^[1-3]?\s?[A-Za-z]{2,}$/.test(book) || !/^\d+$/.test(ch || "") || !/^\d+$/.test(vs || "") || !["tb", "bis"].includes(ver)) {
+  if (!/^[1-3]?\s?[A-Za-z]{2,}$/.test(book) || !/^\d+$/.test(ch || "") || !/^\d+$/.test(vs || "") || !["tb", "bis", "nasb"].includes(ver)) {
     return new Response(JSON.stringify({ error: "Parametros invalidos" }), { status: 400, headers: H });
   }
   const passage = book.replace(/\s+/g, "+") + "+" + ch + ":" + vs;
