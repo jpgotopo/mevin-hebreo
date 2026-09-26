@@ -31,6 +31,17 @@ export default async (req) => {
       },
       body: JSON.stringify(body),
     });
+    // Modo streaming: reenviar el flujo de eventos tal como llega de Anthropic
+    if (body.stream && upstream.ok && upstream.body) {
+      return new Response(upstream.body, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+    }
     const data = await upstream.json();
     return new Response(JSON.stringify(data), {
       status: upstream.status,

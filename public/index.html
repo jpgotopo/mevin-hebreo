@@ -112,6 +112,8 @@
     .lang-btn.active{background:var(--p50);color:var(--p800)}
     .trans-text.idn{font-style:italic}
     .trans-na{font-size:12px;color:var(--t3);font-style:italic}
+    .typing{color:var(--p400);animation:blink 1s steps(1) infinite;margin-left:1px}
+    @keyframes blink{50%{opacity:0}}
     .src-note{font-size:11px;color:var(--t3);margin-top:8px;font-style:italic}
   </style>
 </head>
@@ -398,6 +400,56 @@ function callClaude(system,user,maxTokens){
         if(!err) err=t('emptyResp')+' (HTTP '+r.status+(data.stop_reason?', stop_reason: '+data.stop_reason:'')+') '+raw.slice(0,200);
         throw new Error(typeof err==='string'?err:JSON.stringify(err));
       });
+    });
+}
+
+// Mientras el texto llega, ocultar marcas ** o * que aún no se han cerrado
+function cleanPartial(x){
+  if(((x.match(/\*\*/g)||[]).length)%2){ var i=x.lastIndexOf('**'); x=x.slice(0,i)+x.slice(i+2); }
+  return x.replace(/(^|\n)#{1,6}\s*$/,'$1');
+}
+// Llamada con streaming: onText recibe el texto acumulado a medida que llega
+function callClaudeStream(system,user,maxTokens,onText){
+  return fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({max_tokens:maxTokens||1000,stream:true,system:system,messages:[{role:'user',content:user}]})})
+    .then(function(r){
+      var ct=r.headers.get('content-type')||'';
+      if(!r.ok||ct.indexOf('event-stream')<0||!r.body||!r.body.getReader){
+        // Sin streaming disponible: leer la respuesta completa como antes
+        return r.text().then(function(raw){
+          var data=null; try{ data=JSON.parse(raw); }catch(e){}
+          if(data&&Array.isArray(data.content)){
+            var txt=data.content.filter(function(b){ return b&&b.text&&(!b.type||b.type==='text'); }).map(function(b){ return b.text; }).join('\n\n').trim();
+            if(txt){ onText(txt); return txt; }
+          }
+          var err=data&&data.error&&(data.error.message||data.error);
+          throw new Error(err?(typeof err==='string'?err:JSON.stringify(err)):('HTTP '+r.status+': '+raw.slice(0,200)));
+        });
+      }
+      var reader=r.body.getReader(), dec=new TextDecoder(), buf='', full='', streamErr=null, stopReason='';
+      function handle(line){
+        if(line.indexOf('data:')!==0) return;
+        var js=line.slice(5).trim(); if(!js) return;
+        var ev; try{ ev=JSON.parse(js); }catch(e){ return; }
+        if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){ full+=ev.delta.text; onText(full); }
+        else if(ev.type==='message_delta'&&ev.delta&&ev.delta.stop_reason){ stopReason=ev.delta.stop_reason; }
+        else if(ev.type==='error'){ streamErr=(ev.error&&ev.error.message)||'stream error'; }
+      }
+      function pump(){
+        return reader.read().then(function(res){
+          if(res.done){
+            if(buf) handle(buf.trim());
+            if(streamErr&&!full) throw new Error(streamErr);
+            if(!full.trim()) throw new Error(t('emptyResp')+(stopReason?' (stop_reason: '+stopReason+')':''));
+            return full;
+          }
+          buf+=dec.decode(res.value,{stream:true});
+          var lines=buf.split('\n'); buf=lines.pop();
+          lines.forEach(function(l){ handle(l.trim()); });
+          return pump();
+        });
+      }
+      return pump();
     });
 }
 
@@ -693,16 +745,21 @@ function callTutor(word,morphParts,uhgContext,seq){
     if(uhgContext) user+='\n\n--- EXTRACTO DEL unfoldingWord Hebrew Grammar (UHG) ---\n'+uhgContext.slice(0,3000)+'\n---';
     user+='\n\nExplica categoría gramatical, forma, significado en contexto y una observación exegética relevante. Donde sea pertinente, integra información del UHG y compara con la KJV y la RVR60.';
   }
-  callClaude(tutorSystem(false),user,2000)
+  var started=false;
+  callClaudeStream(tutorSystem(false),user,2000,function(partial){
+      if(seq!==analysisSeq) return;
+      if(!started){ started=true; showTutor('',seq,true); }
+      var c=document.getElementById('tutorContent'); if(c) c.innerHTML=renderMd(cleanPartial(partial))+'<span class="typing">&#9612;</span>';
+    })
     .then(function(text){ showTutor(renderMd(text),seq); })
     .catch(function(e){ showTutor('<p style="color:#a32d2d;font-size:13px">'+escHtml(t('noExpl')+e.message)+'</p>',seq); });
 }
-function showTutor(html,seq){
+function showTutor(html,seq,streaming){
   if(seq!==analysisSeq) return;
   var ld=document.getElementById('tutorLoading'), c=document.getElementById('tutorContent'), q=document.getElementById('questionRow');
   if(ld) ld.style.display='none';
   if(c){ c.innerHTML=html; c.style.display='block'; }
-  if(q) q.style.display='flex';
+  if(q) q.style.display=streaming?'none':'flex';
 }
 
 function askFollowUp(){
@@ -715,7 +772,9 @@ function askFollowUp(){
   var ctx=word?(LANG==='id'
     ? 'Kata yang dibahas adalah "'+word.text+'" (morf: '+word.morph+', H'+word.lemma+') dalam '+refText(currentRef)+'.'
     : 'La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+refText(currentRef)+'.'):'';
-  callClaude(tutorSystem(true),ctx+'\n\n'+(LANG==='id'?'Pertanyaan: ':'Pregunta: ')+q,1500)
+  callClaudeStream(tutorSystem(true),ctx+'\n\n'+(LANG==='id'?'Pertanyaan: ':'Pregunta: ')+q,1500,function(partial){
+      var el=document.getElementById(holderId); if(el&&seq===analysisSeq){ el.className=''; el.innerHTML=renderMd(cleanPartial(partial))+'<span class="typing">&#9612;</span>'; }
+    })
     .then(function(text){ var el=document.getElementById(holderId); if(el&&seq===analysisSeq){ el.className=''; el.innerHTML=renderMd(text); } })
     .catch(function(e){ var el=document.getElementById(holderId); if(el){ el.className=''; el.innerHTML='<p style="color:#a32d2d;font-size:13px">'+escHtml(t('connErr')+e.message)+'</p>'; } });
 }
