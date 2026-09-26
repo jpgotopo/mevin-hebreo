@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mevin - Tutor de Hebreo Biblico</title>
+  <title>Mevin - Hebreo Bíblico / Ibrani Alkitab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -32,7 +32,7 @@
     .brand-heb{font-family:'Crimson Pro',serif;font-size:26px;direction:rtl;color:var(--p600);line-height:1}
     .brand-name{font-size:18px;font-weight:500;color:var(--t1);letter-spacing:-.3px}
     .brand-badge{font-size:11px;font-weight:500;color:var(--p600);background:var(--p50);border:.5px solid var(--p200);border-radius:20px;padding:2px 8px}
-    .topbar-desc{margin-left:auto;font-size:12px;color:var(--t3);display:none}
+    .topbar-desc{font-size:12px;color:var(--t3);display:none}
     @media(min-width:600px){.topbar-desc{display:block}}
     .main{max-width:980px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:1fr;gap:1.25rem}
     @media(min-width:720px){.main{grid-template-columns:1fr 1fr;align-items:start}.col-l{grid-column:1}.col-r{grid-column:2}}
@@ -106,43 +106,47 @@
     .empty-icon{font-size:2.5rem;margin-bottom:1rem}
     footer{max-width:980px;margin:0 auto;padding:1.5rem 1.5rem 2.5rem;font-size:12px;color:var(--t3);border-top:.5px solid var(--bdl);line-height:1.7}
     footer a{color:var(--p400);text-decoration:none}footer a:hover{text-decoration:underline}
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+    .lang-toggle{display:inline-flex;border:.5px solid var(--p200);border-radius:20px;overflow:hidden}
+    .lang-btn{font-size:12px;font-weight:500;font-family:inherit;padding:4px 10px;border:none;background:var(--bgs);color:var(--t2);cursor:pointer}
+    .lang-btn.active{background:var(--p50);color:var(--p800)}
+    .trans-text.idn{font-style:italic}
+    .trans-na{font-size:12px;color:var(--t3);font-style:italic}
+    .src-note{font-size:11px;color:var(--t3);margin-top:8px;font-style:italic}
   </style>
 </head>
 <body>
 
 <nav class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#"><span class="brand-heb">&#1502;&#1461;&#1489;&#1460;&#1503;</span><span class="brand-name">Mevin</span><span class="brand-badge">hebreo biblico</span></a>
-    <span class="topbar-desc">WLC - morfologia OSHB - UHG - Gesenius - SHEBANQ - KJV / TBI / BIMK</span>
+    <a class="brand" href="#"><span class="brand-heb">&#1502;&#1461;&#1489;&#1460;&#1503;</span><span class="brand-name">Mevin</span><span class="brand-badge" data-i18n="badge">hebreo bíblico</span></a>
+    <div class="topbar-right">
+      <span class="topbar-desc">WLC · OSHB · UHG · Gesenius · SHEBANQ · KJV / TBI / BIMK</span>
+      <div class="lang-toggle" role="group" aria-label="Idioma / Bahasa">
+        <button class="lang-btn" data-lang="es" type="button">ES</button>
+        <button class="lang-btn" data-lang="id" type="button">ID</button>
+      </div>
+    </div>
   </div>
 </nav>
 
 <main class="main">
   <div class="col-l" style="display:flex;flex-direction:column;gap:1rem">
     <div class="card">
-      <div class="card-label">Referencia biblica</div>
+      <div class="card-label" data-i18n="refLabel">Referencia bíblica</div>
       <div class="search-row">
-        <input class="ref-input" id="refInput" type="text" placeholder="Ej: Gen 1:1" value="Gen 1:1"/>
+        <input class="ref-input" id="refInput" type="text" value="Gen 1:1"/>
         <select class="version-select" id="versionSel">
           <option value="all">WLC + KJV + TBI + BIMK</option>
           <option value="idn">WLC + TBI + BIMK</option>
           <option value="kjv">WLC + KJV</option>
           <option value="tb">WLC + TBI</option>
           <option value="bimk">WLC + BIMK</option>
-          <option value="wlc">Solo WLC</option>
+          <option value="wlc" data-i18n="onlyWLC">Solo WLC</option>
         </select>
-        <button class="btn" id="loadBtn">Cargar</button>
+        <button class="btn" id="loadBtn" data-i18n="load">Cargar</button>
       </div>
-      <div class="quick-tags">
-        <span class="tag" onclick="quickLoad('Gen 1:1')">Gen 1:1</span>
-        <span class="tag" onclick="quickLoad('Dt 6:4')">Dt 6:4</span>
-        <span class="tag" onclick="quickLoad('Sal 23:1')">Sal 23:1</span>
-        <span class="tag" onclick="quickLoad('Is 53:5')">Is 53:5</span>
-        <span class="tag" onclick="quickLoad('Ex 20:2')">Ex 20:2</span>
-        <span class="tag" onclick="quickLoad('Gn 3:15')">Gn 3:15</span>
-        <span class="tag" onclick="quickLoad('Pro 3:5')">Pro 3:5</span>
-        <span class="tag" onclick="quickLoad('Sal 119:1')">Sal 119:1</span>
-      </div>
+      <div class="quick-tags" id="quickTags"></div>
       <div id="errorBox" style="display:none"></div>
       <div id="loadingBar" style="display:none"><div class="loading-bar"><div class="loading-bar-fill"></div></div></div>
     </div>
@@ -150,483 +154,214 @@
   </div>
 
   <div class="col-r">
-    <div id="analysisArea">
-      <div class="analysis-card">
-        <div class="empty-state">
-          <div class="empty-icon">&#128214;</div>
-          <p>Carga un versiculo y haz clic en cualquier palabra hebrea para ver su analisis morfologico.</p>
-        </div>
-      </div>
-    </div>
+    <div id="analysisArea"></div>
   </div>
 </main>
 
-<footer>
-  <strong>Mevin</strong> usa el texto del <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> via Open Scriptures Hebrew Bible (CC-BY 4.0).
-  Gramatica: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) y
-  <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius' Hebrew Grammar</a> (dominio publico).
-  Analisis sintactico: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam).
-  Traducciones via <a href="https://scripture.api.bible" target="_blank">API.Bible</a>.
-  Tutor IA: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.
-</footer>
-
+<footer id="footer"></footer>
 <script>
-var KJV_ID='de4e12af7f28f599-02';
-// Los IDs de TB y BIMK en API.Bible se detectan automaticamente consultando las Biblias en indonesio
-var IDN_IDS=null;
-function norm(x){ return (x||'').toString().toUpperCase().trim(); }
-function resolveIndonesianIds(){
-  if (IDN_IDS) return Promise.resolve(IDN_IDS);
-  return fetch('/api/bible?path='+encodeURIComponent('/bibles?language=ind'))
-    .then(function(r){ return r.ok ? r.json() : {data:[]}; })
-    .then(function(d){
-      var list=(d&&d.data)||[];
-      var tb=null, bimk=null;
-      list.forEach(function(b){
-        var ab=norm(b.abbreviation), abl=norm(b.abbreviationLocal), nm=norm(b.name)+' '+norm(b.nameLocal);
-        if(!tb && (ab==='TB'||abl==='TB'||ab==='TBI'||abl==='TBI'||(nm.indexOf('TERJEMAHAN BARU')>=0 && nm.indexOf('EDISI')<0))) tb=b.id;
-        if(!bimk && (ab==='BIMK'||abl==='BIMK'||ab==='BIS'||abl==='BIS'||nm.indexOf('MASA KINI')>=0)) bimk=b.id;
-      });
-      IDN_IDS={tb:tb,bimk:bimk};
-      return IDN_IDS;
-    })
-    .catch(function(){ IDN_IDS={tb:null,bimk:null}; return IDN_IDS; });
+// ─── IDIOMA / BAHASA ─────────────────────────────────────────────────────────
+var LANG='es';
+try{ var savedLang=localStorage.getItem('mevin-lang'); if(savedLang==='es'||savedLang==='id') LANG=savedLang; }catch(e){}
+
+var I18N={
+  es:{
+    badge:'hebreo bíblico', refLabel:'Referencia bíblica', placeholder:'Ej: Gen 1:1', load:'Cargar', onlyWLC:'Solo WLC',
+    empty:'Carga un versículo y haz clic en cualquier palabra hebrea para ver su análisis morfológico.',
+    loading:'Cargando...', hint:'Haz clic en una palabra para analizarla', loadingTrans:'Cargando traducciones...',
+    transNA:'No disponible.', refBad:'Referencia no reconocida. Intenta: Gen 1:1, Sal 23:1, Is 53:5',
+    fileNF:'Archivo no encontrado: ', chNF:'Capítulo no encontrado: ', vsNF:'Versículo no encontrado: ', errPrefix:'Error: ',
+    lexeme:'Lexema', code:'Código', refs:'Referencias',
+    tutorLoading:'Consultando fuentes gramaticales...', askPh:'Pregunta a Mevin sobre esta palabra...', ask:'Preguntar',
+    processing:'Procesando...', noExpl:'No se pudo obtener la explicación. Detalle: ', emptyResp:'respuesta vacía', connErr:'Error al conectar: ',
+    uhgLoading:'Cargando UHG...', uhgTranslating:'', uhgFail:'No se pudo cargar el contenido del UHG.', uhgNote:'',
+    gesIntro:'Gesenius\u2019 Hebrew Grammar es la gramática de referencia clásica del hebreo bíblico (Kautzsch, 1910). Este tema comienza en el párrafo {n} de la edición Oxford.',
+    gesOpen:'Abrir párrafo {n} en Wikisource', gesNone:'No hay referencias directas del Gesenius para esta categoría morfológica.',
+    shbIntro:'SHEBANQ es el portal de la <strong>Biblia Hebraica Stuttgartensia Amstelodamensis (BHSA)</strong>, base de datos sintáctica del hebreo bíblico desarrollada por el Eep Talstra Centre for Bible and Computer (VU Amsterdam). Ofrece análisis morfológico y sintáctico independiente del OSHB, a nivel de palabra, frase y cláusula.',
+    shbSee:'Ver {ref} en SHEBANQ', shbOpen:'Abrir SHEBANQ (buscar manualmente: {w})', shbNoteT:'Nota sobre la búsqueda en SHEBANQ',
+    shbNote:'SHEBANQ identifica las palabras por el node ID interno del BHSA, no por el número Strong. Para ver los datos de esta palabra, abre SHEBANQ, ve al versículo indicado y haz clic sobre la palabra en el texto hebreo.',
+    shbFeat:'Features BHSA disponibles (consultables en SHEBANQ vía MQL / Text-Fabric):',
+    lblCat:'Categoría', lblStem:'Conjugación', lblTam:'Aspecto/TAM', lblPers:'Persona', lblGen:'Género', lblNum:'Número', lblState:'Estado', lblType:'Tipo',
+    footer:'<strong>Mevin</strong> usa el texto del <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> vía Open Scriptures Hebrew Bible (CC-BY 4.0). Gramática: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) y <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (dominio público). Análisis sintáctico: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV vía <a href="https://scripture.api.bible" target="_blank">API.Bible</a>; TB y BIMK © Lembaga Alkitab Indonesia, vía <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor IA: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
+  },
+  id:{
+    badge:'Ibrani Alkitab', refLabel:'Referensi Alkitab', placeholder:'Mis. Kej 1:1', load:'Muat', onlyWLC:'Hanya WLC',
+    empty:'Muat sebuah ayat, lalu klik kata Ibrani mana pun untuk melihat analisis morfologisnya.',
+    loading:'Memuat...', hint:'Klik sebuah kata untuk menganalisisnya', loadingTrans:'Memuat terjemahan...',
+    transNA:'Tidak tersedia.', refBad:'Referensi tidak dikenali. Coba: Kej 1:1, Mzm 23:1, Yes 53:5',
+    fileNF:'Berkas tidak ditemukan: ', chNF:'Pasal tidak ditemukan: ', vsNF:'Ayat tidak ditemukan: ', errPrefix:'Galat: ',
+    lexeme:'Leksem', code:'Kode', refs:'Rujukan',
+    tutorLoading:'Membaca sumber tata bahasa...', askPh:'Tanyakan kepada Mevin tentang kata ini...', ask:'Tanya',
+    processing:'Memproses...', noExpl:'Penjelasan tidak dapat diperoleh. Rincian: ', emptyResp:'respons kosong', connErr:'Gagal terhubung: ',
+    uhgLoading:'Memuat UHG...', uhgTranslating:'Menerjemahkan UHG ke bahasa Indonesia...', uhgFail:'Konten UHG tidak dapat dimuat.',
+    uhgNote:'Terjemahan otomatis dari bahasa Inggris. Untuk kutipan akademis, rujuklah sumber aslinya.',
+    gesIntro:'Gesenius\u2019 Hebrew Grammar adalah tata bahasa rujukan klasik untuk bahasa Ibrani Alkitab (Kautzsch, 1910). Topik ini dimulai pada paragraf {n} edisi Oxford. Teks aslinya berbahasa Inggris.',
+    gesOpen:'Buka paragraf {n} di Wikisource', gesNone:'Tidak ada rujukan Gesenius langsung untuk kategori morfologis ini.',
+    shbIntro:'SHEBANQ adalah portal untuk <strong>Biblia Hebraica Stuttgartensia Amstelodamensis (BHSA)</strong>, basis data sintaksis bahasa Ibrani Alkitab yang dikembangkan oleh Eep Talstra Centre for Bible and Computer (VU Amsterdam). SHEBANQ menyediakan analisis morfologis dan sintaksis yang independen dari OSHB, pada tingkat kata, frasa, dan klausa.',
+    shbSee:'Lihat {ref} di SHEBANQ', shbOpen:'Buka SHEBANQ (cari secara manual: {w})', shbNoteT:'Catatan tentang pencarian di SHEBANQ',
+    shbNote:'SHEBANQ mengenali kata berdasarkan node ID internal BHSA, bukan nomor Strong. Untuk melihat data kata ini, buka SHEBANQ, buka ayat tersebut, lalu klik kata itu pada teks Ibrani.',
+    shbFeat:'Fitur BHSA yang tersedia (dapat ditelusuri di SHEBANQ melalui MQL / Text-Fabric):',
+    lblCat:'Kategori', lblStem:'Konjugasi', lblTam:'Aspek/TAM', lblPers:'Persona', lblGen:'Gender', lblNum:'Jumlah', lblState:'Status', lblType:'Jenis',
+    footer:'<strong>Mevin</strong> menggunakan teks <a href="https://github.com/openscriptures/morphhb" target="_blank">Westminster Leningrad Codex (WLC)</a> melalui Open Scriptures Hebrew Bible (CC-BY 4.0). Tata bahasa: <a href="https://uhg.readthedocs.io/en/latest/" target="_blank">unfoldingWord Hebrew Grammar</a> (CC-BY-SA 4.0) dan <a href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar" target="_blank">Gesenius\u2019 Hebrew Grammar</a> (domain publik). Analisis sintaksis: <a href="https://shebanq.ancient-data.org" target="_blank">SHEBANQ / BHSA</a> (ETCBC, VU Amsterdam). KJV melalui <a href="https://scripture.api.bible" target="_blank">API.Bible</a>; TB dan BIMK © Lembaga Alkitab Indonesia, melalui <a href="https://alkitab.sabda.org" target="_blank">Alkitab SABDA</a>. Tutor AI: <a href="https://anthropic.com" target="_blank">Claude (Anthropic)</a>.'
+  }
+};
+function t(k,vars){
+  var s=(I18N[LANG]&&I18N[LANG][k]!==undefined)?I18N[LANG][k]:(I18N.es[k]!==undefined?I18N.es[k]:k);
+  if(vars){ for(var v in vars){ s=s.split('{'+v+'}').join(vars[v]); } }
+  return s;
 }
 
+// ─── LIBROS ──────────────────────────────────────────────────────────────────
+var KJV_ID='de4e12af7f28f599-02';
 var BOOK_FILE=['Gen','Exod','Lev','Num','Deut','Josh','Judg','Ruth','1Sam','2Sam','1Kgs','2Kgs','1Chr','2Chr','Ezra','Neh','Esth','Job','Ps','Prov','Eccl','Song','Isa','Jer','Lam','Ezek','Dan','Hos','Joel','Amos','Obad','Jonah','Mic','Nah','Hab','Zeph','Hag','Zech','Mal'];
 var BOOK_API=['GEN','EXO','LEV','NUM','DEU','JOS','JDG','RUT','1SA','2SA','1KI','2KI','1CH','2CH','EZR','NEH','EST','JOB','PSA','PRO','ECC','SNG','ISA','JER','LAM','EZK','DAN','HOS','JOL','AMO','OBA','JON','MIC','NAM','HAB','ZEP','HAG','ZEC','MAL'];
-var BOOK_DISP=['Genesis','Exodo','Levitico','Numeros','Deuteronomio','Josue','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Cronicas','2 Cronicas','Esdras','Nehemias','Ester','Job','Salmos','Proverbios','Eclesiastes','Cantares','Isaias','Jeremias','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amos','Abdias','Jonas','Miqueas','Nahum','Habacuc','Sofonias','Hageo','Zacarias','Malaquias'];
+var BOOK_DISP_ES=['Génesis','Éxodo','Levítico','Números','Deuteronomio','Josué','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Crónicas','2 Crónicas','Esdras','Nehemías','Ester','Job','Salmos','Proverbios','Eclesiastés','Cantares','Isaías','Jeremías','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amós','Abdías','Jonás','Miqueas','Nahúm','Habacuc','Sofonías','Hageo','Zacarías','Malaquías'];
+var BOOK_DISP_ID=['Kejadian','Keluaran','Imamat','Bilangan','Ulangan','Yosua','Hakim-hakim','Rut','1 Samuel','2 Samuel','1 Raja-raja','2 Raja-raja','1 Tawarikh','2 Tawarikh','Ezra','Nehemia','Ester','Ayub','Mazmur','Amsal','Pengkhotbah','Kidung Agung','Yesaya','Yeremia','Ratapan','Yehezkiel','Daniel','Hosea','Yoel','Amos','Obaja','Yunus','Mikha','Nahum','Habakuk','Zefanya','Hagai','Zakharia','Maleakhi'];
+var SABDA_ABBR=['Kej','Kel','Ima','Bil','Ula','Yos','Hak','Rut','1 Sam','2 Sam','1 Raj','2 Raj','1 Taw','2 Taw','Ezr','Neh','Est','Ayb','Maz','Ams','Pkh','Kid','Yes','Yer','Rat','Yeh','Dan','Hos','Yoe','Amo','Oba','Yun','Mik','Nah','Hab','Zef','Hag','Zak','Mal'];
+var SHEBANQ_BOOKS=['Genesis','Exodus','Leviticus','Numeri','Deuteronomy','Joshua','Judges','Ruth','Samuel_I','Samuel_II','Kings_I','Kings_II','Chronicles_I','Chronicles_II','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song_of_songs','Jesaia','Jeremia','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi'];
+function bookName(idx){ return (LANG==='id'?BOOK_DISP_ID:BOOK_DISP_ES)[idx]; }
 
-var SHEBANQ_BOOKS = ['Genesis','Exodus','Leviticus','Numeri','Deuteronomy','Joshua','Judges','Ruth','Samuel_I','Samuel_II','Kings_I','Kings_II','Chronicles_I','Chronicles_II','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song_of_songs','Jesaia','Jeremia','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi'];
+// Abreviaturas aceptadas (español, inglés e indonesio)
+var BOOK_IDX={'gen':0,'gn':0,'genesis':0,'kej':0,'kejadian':0,
+'ex':1,'exo':1,'exod':1,'exodo':1,'exodus':1,'kel':1,'keluaran':1,
+'lev':2,'lv':2,'levitico':2,'im':2,'ima':2,'imamat':2,
+'num':3,'nm':3,'numeros':3,'bil':3,'bilangan':3,
+'deu':4,'dt':4,'deut':4,'deuteronomio':4,'ul':4,'ula':4,'ulangan':4,
+'jos':5,'josue':5,'yos':5,'yosua':5,
+'jue':6,'jueces':6,'hak':6,
+'rut':7,'rth':7,
+'1sa':8,'1sam':8,'1samuel':8,'2sa':9,'2sam':9,'2samuel':9,
+'1re':10,'1rey':10,'1reyes':10,'1ki':10,'1kgs':10,'1raj':10,'2re':11,'2rey':11,'2reyes':11,'2ki':11,'2kgs':11,'2raj':11,
+'1cr':12,'1ch':12,'1cro':12,'1chr':12,'1taw':12,'2cr':13,'2ch':13,'2cro':13,'2chr':13,'2taw':13,
+'esd':14,'ezr':14,'neh':15,'est':16,'job':17,'jb':17,'ayb':17,'ayub':17,
+'sal':18,'ps':18,'salmos':18,'psalms':18,'salmo':18,'psal':18,'maz':18,'mzm':18,'mazmur':18,
+'pro':19,'pr':19,'prov':19,'proverbios':19,'proverbs':19,'ams':19,'amsal':19,
+'ecl':20,'qoh':20,'ec':20,'pkh':20,'cnt':21,'son':21,'cant':21,'kid':21,
+'is':22,'isa':22,'isaias':22,'isaiah':22,'yes':22,'yesaya':22,
+'jer':23,'jeremias':23,'yer':23,'yeremia':23,'lam':24,'rat':24,'ratapan':24,
+'eze':25,'ez':25,'ezequiel':25,'ezek':25,'yeh':25,'yehezkiel':25,
+'dan':26,'dn':26,'daniel':26,'ose':27,'hos':27,'oseas':27,'hosea':27,
+'joe':28,'jl':28,'joel':28,'yl':28,'yoe':28,'yoel':28,
+'amo':29,'am':29,'amos':29,'abd':30,'ob':30,'oba':30,'obaja':30,
+'jon':31,'jonas':31,'jonah':31,'yun':31,'yunus':31,
+'miq':32,'mic':32,'miqueas':32,'mi':32,'mik':32,'mikha':32,
+'nah':33,'na':33,'nahum':33,'hab':34,'habacuc':34,'habakuk':34,
+'sof':35,'zeph':35,'zef':35,'zefanya':35,'hag':36,'hageo':36,'hagai':36,
+'zac':37,'zech':37,'zacarias':37,'za':37,'zak':37,'zakharia':37,'mal':38,'maleakhi':38};
 
-var BOOK_IDX={'gen':0,'gn':0,'genesis':0,'ex':1,'exo':1,'exod':1,'exodo':1,'exodus':1,'lev':2,'lv':2,'levitico':2,'num':3,'nm':3,'numeros':3,'deu':4,'dt':4,'deut':4,'deuteronomio':4,'jos':5,'josue':5,'jue':6,'jueces':6,'rut':7,'rth':7,'1sa':8,'1sam':8,'1samuel':8,'2sa':9,'2sam':9,'2samuel':9,'1re':10,'1rey':10,'1reyes':10,'1ki':10,'1kgs':10,'2re':11,'2rey':11,'2reyes':11,'2ki':11,'2kgs':11,'1cr':12,'1ch':12,'1cro':12,'1chr':12,'2cr':13,'2ch':13,'2cro':13,'2chr':13,'esd':14,'ezr':14,'neh':15,'est':16,'job':17,'jb':17,'sal':18,'ps':18,'salmos':18,'psalms':18,'salmo':18,'psal':18,'pro':19,'pr':19,'prov':19,'proverbios':19,'proverbs':19,'ecl':20,'qoh':20,'ec':20,'cnt':21,'son':21,'cant':21,'is':22,'isa':22,'isaias':22,'isaiah':22,'jer':23,'jeremias':23,'lam':24,'eze':25,'ez':25,'ezequiel':25,'ezek':25,'dan':26,'dn':26,'daniel':26,'ose':27,'hos':27,'oseas':27,'joe':28,'jl':28,'joel':28,'amo':29,'am':29,'amos':29,'abd':30,'ob':30,'jon':31,'jonas':31,'jonah':31,'miq':32,'mic':32,'miqueas':32,'nah':33,'na':33,'nahum':33,'hab':34,'habacuc':34,'sof':35,'zeph':35,'hag':36,'hageo':36,'zac':37,'zech':37,'zacarias':37,'mal':38};
+var QUICK={es:['Gen 1:1','Dt 6:4','Sal 23:1','Is 53:5','Ex 20:2','Gn 3:15','Pro 3:5','Sal 119:1'],
+           id:['Kej 1:1','Ul 6:4','Mzm 23:1','Yes 53:5','Kel 20:2','Kej 3:15','Ams 3:5','Mzm 119:1']};
 
+// ─── MORFOLOGÍA ──────────────────────────────────────────────────────────────
 var MORPH={
-  pos:{'A':'adjetivo','C':'conjuncion','D':'adverbio','N':'sustantivo','P':'pronombre','R':'preposicion','S':'sufijo','T':'particula','V':'verbo'},
-  gender:{'m':'masculino','f':'femenino','b':'ambos','c':'comun'},
-  number:{'s':'singular','p':'plural','d':'dual'},
-  state:{'a':'absoluto','c':'constructo','d':'determinado'},
-  person:{'1':'1a persona','2':'2a persona','3':'3a persona'},
-  stem:{'q':'Qal','N':'Nifal','p':'Piel','P':'Pual','h':'Hifil','H':'Hofal','t':'Hitpael','o':'Polel','O':'Polal','r':'Hitpolel','m':'Poel','M':'Poal','k':'Pealal','D':'Nitpael'},
-  tense:{'p':'qatal (perfecto)','q':'yiqtol (imperfecto)','i':'yiqtol+vav consec.','w':'wayyiqtol','h':'imperativo','a':'inf. absoluto','c':'inf. constructo','r':'participio activo','s':'participio pasivo'}
+ es:{pos:{'A':'adjetivo','C':'conjunción','D':'adverbio','N':'sustantivo','P':'pronombre','R':'preposición','S':'sufijo','T':'partícula','V':'verbo'},
+     gender:{'m':'masculino','f':'femenino','b':'ambos','c':'común'},
+     number:{'s':'singular','p':'plural','d':'dual'},
+     state:{'a':'absoluto','c':'constructo','d':'determinado'},
+     person:{'1':'1.ª persona','2':'2.ª persona','3':'3.ª persona'},
+     tense:{'p':'qatal (perfecto)','q':'yiqtol (imperfecto)','i':'yiqtol + vav consecutiva','w':'wayyiqtol','h':'imperativo','a':'infinitivo absoluto','c':'infinitivo constructo','r':'participio activo','s':'participio pasivo'},
+     ptype:{'d':'demostrativo','r':'relativo','p':'personal','i':'indefinido'},
+     ttype:{'a':'artículo definido','d':'interrogativa','e':'existencial','n':'negación','i':'interrogativa','j':'interjección'},
+     prep:'preposición', conj:'conjunción'},
+ id:{pos:{'A':'adjektiva','C':'konjungsi','D':'adverbia','N':'nomina','P':'pronomina','R':'preposisi','S':'sufiks','T':'partikel','V':'verba'},
+     gender:{'m':'maskulin','f':'feminin','b':'keduanya','c':'umum'},
+     number:{'s':'tunggal','p':'jamak','d':'dual'},
+     state:{'a':'absolut','c':'konstruk','d':'tentu'},
+     person:{'1':'orang pertama','2':'orang kedua','3':'orang ketiga'},
+     tense:{'p':'qatal (perfek)','q':'yiqtol (imperfek)','i':'yiqtol + waw konsekutif','w':'wayyiqtol','h':'imperatif','a':'infinitif absolut','c':'infinitif konstruk','r':'partisip aktif','s':'partisip pasif'},
+     ptype:{'d':'demonstratif','r':'relatif','p':'personal','i':'indefinit'},
+     ttype:{'a':'artikel tentu','d':'interogatif','e':'eksistensial','n':'negasi','i':'interogatif','j':'interjeksi'},
+     prep:'preposisi', conj:'konjungsi'}
 };
+var STEMS={'q':'Qal','N':'Nifal','p':'Piel','P':'Pual','h':'Hifil','H':'Hofal','t':'Hitpael','o':'Polel','O':'Polal','r':'Hitpolel','m':'Poel','M':'Poal','k':'Pealal','D':'Nitpael'};
 
-function getGrammarRefs(morphCode) {
-  if (!morphCode) return [];
-  var pos = morphCode[0];
-  var refs = [];
-
-  if (pos === 'V') {
-    var tenseMap = {
-      'p': {page:'verb_perfect', label:'Verbo perfecto (qatal)', ges:'44', gtitle:'Par. 44 Perfect of Qal'},
-      'q': {page:'verb_imperfect', label:'Verbo imperfecto (yiqtol)', ges:'47', gtitle:'Par. 47 Imperfect'},
-      'w': {page:'verb_sequential_imperfect', label:'Wayyiqtol (vav consec.)', ges:'111', gtitle:'Par. 111 Imperfect + Waw Consec.'},
-      'i': {page:'verb_sequential_perfect', label:'Vav consec. + perfecto', ges:'112', gtitle:'Par. 112 Perfect + Waw Consec.'},
-      'h': {page:'verb_imperative', label:'Imperativo', ges:'46', gtitle:'Par. 46 Imperative'},
-      'a': {page:'infinitive_absolute', label:'Infinitivo absoluto', ges:'45', gtitle:'Par. 45 Infinitive'},
-      'c': {page:'infinitive_construct', label:'Infinitivo constructo', ges:'45', gtitle:'Par. 45 Infinitive'},
-      'r': {page:'participle_active', label:'Participio activo', ges:'50', gtitle:'Par. 50 Participle'},
-      's': {page:'participle_passive', label:'Participio pasivo', ges:'50', gtitle:'Par. 50 Participle'}
-    };
-    var t = morphCode[2];
-    if (t && tenseMap[t]) { var tm = tenseMap[t]; refs.push({type:'uhg', page:tm.page, label:tm.label, ges:tm.ges, gtitle:tm.gtitle}); }
-    var stemMap = {
-      'q':{page:'stem_qal', label:'Conjugacion: Qal', ges:'43', gtitle:'Par. 43 Qal'},
-      'N':{page:'stem_niphal', label:'Conjugacion: Nifal', ges:'51', gtitle:'Par. 51 Niphal'},
-      'p':{page:'stem_piel', label:'Conjugacion: Piel', ges:'52', gtitle:'Par. 52 Piel'},
-      'P':{page:'stem_pual', label:'Conjugacion: Pual', ges:'52', gtitle:'Par. 52 Pual'},
-      'h':{page:'stem_hiphil', label:'Conjugacion: Hifil', ges:'53', gtitle:'Par. 53 Hiphil'},
-      'H':{page:'stem_hophal', label:'Conjugacion: Hofal', ges:'53', gtitle:'Par. 53 Hophal'},
-      't':{page:'stem_hithpael', label:'Conjugacion: Hitpael', ges:'54', gtitle:'Par. 54 Hithpael'}
-    };
-    var s = morphCode[1];
-    if (s && stemMap[s]) refs.push({type:'ges', page: stemMap[s].page, label: stemMap[s].label, ges: stemMap[s].ges, gtitle: stemMap[s].gtitle});
-    refs.push({type:'uhg', page:'verb', label:'El verbo hebreo (general)', ges:'38', gtitle:'Par. 38-41 General View of the Verb'});
-  } else if (pos === 'N') {
-    refs.push({type:'uhg', page:'noun_common', label:'Sustantivo comun', ges:'79', gtitle:'Par. 79 General View of the Noun'});
-    var st = morphCode[3];
-    if (st==='c') refs.push({type:'uhg', page:'state_construct', label:'Estado constructo', ges:'89', gtitle:'Par. 89 Construct State'});
-    if (st==='a') refs.push({type:'uhg', page:'state_absolute', label:'Estado absoluto', ges:'89', gtitle:'Par. 89 Absolute State'});
-    var num = morphCode[2];
-    if (num==='p') refs.push({type:'uhg', page:'number_plural', label:'Numero plural', ges:'87', gtitle:'Par. 87 Plural'});
-    if (num==='d') refs.push({type:'uhg', page:'number_dual', label:'Numero dual', ges:'88', gtitle:'Par. 88 Dual'});
-  } else if (pos === 'A') {
-    refs.push({type:'uhg', page:'adjective', label:'Adjetivo', ges:'132', gtitle:'Par. 132 Adjective with Substantive'});
-  } else if (pos === 'P') {
-    var ptype = {'d':'pronoun_demonstrative','r':'pronoun_relative','p':'pronoun_personal','i':'pronoun_indefinite'};
-    var ptypeGes = {'d':'34','r':'36','p':'32','i':'37'};
-    var ptypeTitle = {'d':'Par. 34 Demonstrative','r':'Par. 36 Relative','p':'Par. 32 Personal Pronoun','i':'Par. 37 Interrogative/Indefinite'};
-    var k = morphCode[1];
-    var ptypeLabels = {d:'demostrativo',r:'relativo',p:'personal',i:'indefinido'};
-    if (k && ptype[k]) refs.push({type:'uhg', page:ptype[k], label:'Pronombre '+ptypeLabels[k], ges:ptypeGes[k], gtitle:ptypeTitle[k]});
-    refs.push({type:'uhg', page:'pronoun', label:'Pronombres (general)', ges:'32', gtitle:'Par. 32 Pronouns'});
-  } else if (pos === 'R') {
-    refs.push({type:'uhg', page:'preposition', label:'Preposicion', ges:'101', gtitle:'Par. 101-102 Prepositions'});
-  } else if (pos === 'C') {
-    refs.push({type:'uhg', page:'conjunction', label:'Conjuncion', ges:'104', gtitle:'Par. 104 Conjunctions'});
-  } else if (pos === 'T') {
-    var tmap = {'a':'particle_definite_article','n':'particle_negative','d':'particle_interrogative','r':'particle_relative','i':'particle_interrogative'};
-    var tges = {'a':'35','n':'152','d':'150','r':'36','i':'150'};
-    var ttitle = {'a':'Par. 35 The Article','n':'Par. 152 Negative','d':'Par. 150 Interrogative','r':'Par. 36 Relative','i':'Par. 150 Interrogative'};
-    var tlabels = {a:'articulo definido',n:'negacion',d:'interrogativa',r:'relativa',i:'interrogativa'};
-    var k2 = morphCode[1];
-    if (k2 && tmap[k2]) refs.push({type:'uhg', page:tmap[k2], label:'Particula: '+(tlabels[k2]||k2), ges:tges[k2], gtitle:ttitle[k2]});
-    refs.push({type:'uhg', page:'particle', label:'Particulas (general)', ges:'99', gtitle:'Par. 99 Particles'});
-  } else if (pos === 'D') {
-    refs.push({type:'uhg', page:'adverb', label:'Adverbio', ges:'100', gtitle:'Par. 100 Adverbs'});
-  } else if (pos === 'S') {
-    refs.push({type:'uhg', page:'suffix_pronominal', label:'Sufijo pronominal', ges:'33', gtitle:'Par. 33 Pronominal Suffixes'});
-  }
-  return refs;
-}
-
-function buildRefChips(refs) {
-  if (!refs.length && !currentRef) return '';
-  var html = '<div class="refs-panel"><span class="refs-label">Referencias</span>';
-
-  if (currentRef) {
-    var shebanqBook = SHEBANQ_BOOKS[currentRef.idx] || '';
-    var shebanqUrl = 'https://shebanq.ancient-data.org/hebrew/text?book='+shebanqBook+'&chapter='+currentRef.ch+'&verse='+currentRef.vs+'&version=2021&mr=m&tp=txt_p';
-    html += '<a class="ref-chip etcbc" href="'+shebanqUrl+'" target="_blank" title="SHEBANQ - ETCBC/BHSA syntactic database"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SHEBANQ / BHSA</a>';
-  }
-
-  for (var i=0; i<refs.length; i++) {
-    var r = refs[i];
-    if (r.type === 'uhg') {
-      html += '<a class="ref-chip uhg" href="https://uhg.readthedocs.io/en/latest/'+r.page+'.html" target="_blank" title="unfoldingWord Hebrew Grammar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>UHG: '+r.label+'</a>';
-    } else {
-      html += '<a class="ref-chip ges" href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar/'+r.ges+'" target="_blank" title="Gesenius Hebrew Grammar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Gesenius: '+r.gtitle+'</a>';
-    }
-  }
-  html += '</div>';
-  return html;
-}
-
-function parseMorph(code) {
-  if (!code) return [];
-  var p=[], pos=code[0];
-  p.push({label:'Categoria',value:MORPH.pos[pos]||pos,hi:true});
+function parseMorph(code){
+  if(!code) return [];
+  var M=MORPH[LANG], p=[], pos=code[0];
+  p.push({label:t('lblCat'),value:M.pos[pos]||pos,hi:true});
   if(pos==='V'){
-    if(code[1]) p.push({label:'Conjugacion',value:MORPH.stem[code[1]]||code[1]});
-    if(code[2]) p.push({label:'Aspecto/TAM',value:MORPH.tense[code[2]]||code[2]});
-    if(code[3]) p.push({label:'Persona',value:MORPH.person[code[3]]||code[3]});
-    if(code[4]) p.push({label:'Genero',value:MORPH.gender[code[4]]||code[4]});
-    if(code[5]) p.push({label:'Numero',value:MORPH.number[code[5]]||code[5]});
+    if(code[1]) p.push({label:t('lblStem'),value:STEMS[code[1]]||code[1]});
+    if(code[2]) p.push({label:t('lblTam'),value:M.tense[code[2]]||code[2]});
+    if(code[3]) p.push({label:t('lblPers'),value:M.person[code[3]]||code[3]});
+    if(code[4]) p.push({label:t('lblGen'),value:M.gender[code[4]]||code[4]});
+    if(code[5]) p.push({label:t('lblNum'),value:M.number[code[5]]||code[5]});
   } else if(pos==='N'||pos==='A'){
-    if(code[1]) p.push({label:'Genero',value:MORPH.gender[code[1]]||code[1]});
-    if(code[2]) p.push({label:'Numero',value:MORPH.number[code[2]]||code[2]});
-    if(code[3]) p.push({label:'Estado',value:MORPH.state[code[3]]||code[3]});
+    if(code[1]) p.push({label:t('lblGen'),value:M.gender[code[1]]||code[1]});
+    if(code[2]) p.push({label:t('lblNum'),value:M.number[code[2]]||code[2]});
+    if(code[3]) p.push({label:t('lblState'),value:M.state[code[3]]||code[3]});
   } else if(pos==='P'){
-    var t={'d':'demostrativo','r':'relativo','p':'personal','i':'indefinido'};
-    if(code[1]) p.push({label:'Tipo',value:t[code[1]]||code[1]});
-    if(code[2]) p.push({label:'Persona',value:MORPH.person[code[2]]||code[2]});
-    if(code[3]) p.push({label:'Genero',value:MORPH.gender[code[3]]||code[3]});
-    if(code[4]) p.push({label:'Numero',value:MORPH.number[code[4]]||code[4]});
+    if(code[1]) p.push({label:t('lblType'),value:M.ptype[code[1]]||code[1]});
+    if(code[2]) p.push({label:t('lblPers'),value:M.person[code[2]]||code[2]});
+    if(code[3]) p.push({label:t('lblGen'),value:M.gender[code[3]]||code[3]});
+    if(code[4]) p.push({label:t('lblNum'),value:M.number[code[4]]||code[4]});
   } else if(pos==='T'){
-    var t2={'a':'articulo definido','d':'interrogativa','e':'existencial','n':'negacion','i':'interrogativa','j':'interjeccion'};
-    if(code[1]) p.push({label:'Tipo',value:t2[code[1]]||code[1]});
-  } else if(pos==='R'){ p.push({label:'Tipo',value:'preposicion'});
-  } else if(pos==='C'){ p.push({label:'Tipo',value:'conjuncion'});}
+    if(code[1]) p.push({label:t('lblType'),value:M.ttype[code[1]]||code[1]});
+  } else if(pos==='R'){ p.push({label:t('lblType'),value:M.prep});
+  } else if(pos==='C'){ p.push({label:t('lblType'),value:M.conj}); }
   return p;
 }
 
-function parseRef(ref) {
-  ref = ref.trim().replace(/\s+/g,' ');
-  var m = ref.match(/^(\d?\s*[a-zA-Za-záéíóúñü]+)\s*(\d+)\s*[:\.\s]\s*(\d+)$/i);
-  if (!m) return null;
-  var key = m[1].toLowerCase().replace(/\s/g,'').replace(/[áä]/g,'a').replace(/[éë]/g,'e').replace(/[íï]/g,'i').replace(/[óö]/g,'o').replace(/[úü]/g,'u').replace(/[ñ]/g,'n');
-  var idx = BOOK_IDX[key];
-  if (idx===undefined) return null;
-  return {idx:idx, file:BOOK_FILE[idx], display:BOOK_DISP[idx], bookId:BOOK_API[idx], ch:parseInt(m[2]), vs:parseInt(m[3])};
+// ─── REFERENCIAS GRAMATICALES (UHG / Gesenius) ───────────────────────────────
+// Wikisource tiene una página por párrafo, así que se enlaza al primer párrafo del tema.
+var REF_LABELS={
+ es:{verb_perfect:'Verbo perfecto (qatal)',verb_imperfect:'Verbo imperfecto (yiqtol)',verb_sequential_imperfect:'Wayyiqtol (vav consecutiva)',verb_sequential_perfect:'Vav consecutiva + perfecto',verb_imperative:'Imperativo',infinitive_absolute:'Infinitivo absoluto',infinitive_construct:'Infinitivo constructo',participle_active:'Participio activo',participle_passive:'Participio pasivo',
+     stem_qal:'Conjugación: Qal',stem_niphal:'Conjugación: Nifal',stem_piel:'Conjugación: Piel',stem_pual:'Conjugación: Pual',stem_hiphil:'Conjugación: Hifil',stem_hophal:'Conjugación: Hofal',stem_hithpael:'Conjugación: Hitpael',
+     verb:'El verbo hebreo (general)',noun_common:'Sustantivo común',state_construct:'Estado constructo',state_absolute:'Estado absoluto',number_plural:'Número plural',number_dual:'Número dual',adjective:'Adjetivo',
+     pronoun_demonstrative:'Pronombre demostrativo',pronoun_relative:'Pronombre relativo',pronoun_personal:'Pronombre personal',pronoun_indefinite:'Pronombre indefinido',pronoun:'Pronombres (general)',
+     preposition:'Preposición',conjunction:'Conjunción',particle_definite_article:'Partícula: artículo definido',particle_negative:'Partícula: negación',particle_interrogative:'Partícula: interrogativa',particle_relative:'Partícula: relativa',particle:'Partículas (general)',adverb:'Adverbio',suffix_pronominal:'Sufijo pronominal'},
+ id:{verb_perfect:'Verba perfek (qatal)',verb_imperfect:'Verba imperfek (yiqtol)',verb_sequential_imperfect:'Wayyiqtol (waw konsekutif)',verb_sequential_perfect:'Waw konsekutif + perfek',verb_imperative:'Imperatif',infinitive_absolute:'Infinitif absolut',infinitive_construct:'Infinitif konstruk',participle_active:'Partisip aktif',participle_passive:'Partisip pasif',
+     stem_qal:'Konjugasi: Qal',stem_niphal:'Konjugasi: Nifal',stem_piel:'Konjugasi: Piel',stem_pual:'Konjugasi: Pual',stem_hiphil:'Konjugasi: Hifil',stem_hophal:'Konjugasi: Hofal',stem_hithpael:'Konjugasi: Hitpael',
+     verb:'Verba Ibrani (umum)',noun_common:'Nomina umum',state_construct:'Status konstruk',state_absolute:'Status absolut',number_plural:'Bentuk jamak',number_dual:'Bentuk dual',adjective:'Adjektiva',
+     pronoun_demonstrative:'Pronomina demonstratif',pronoun_relative:'Pronomina relatif',pronoun_personal:'Pronomina personal',pronoun_indefinite:'Pronomina indefinit',pronoun:'Pronomina (umum)',
+     preposition:'Preposisi',conjunction:'Konjungsi',particle_definite_article:'Partikel: artikel tentu',particle_negative:'Partikel: negasi',particle_interrogative:'Partikel: interogatif',particle_relative:'Partikel: relatif',particle:'Partikel (umum)',adverb:'Adverbia',suffix_pronominal:'Sufiks pronominal'}
+};
+function refLabel(r){ return REF_LABELS[LANG][r.page]||r.page; }
+
+function getGrammarRefs(code){
+  if(!code) return [];
+  var pos=code[0], refs=[];
+  function add(type,page,ges,gtitle){ refs.push({type:type,page:page,ges:ges,gtitle:gtitle}); }
+  if(pos==='V'){
+    var tm={'p':['verb_perfect','44','§44 Perfect of Qal'],'q':['verb_imperfect','47','§47 Imperfect'],'w':['verb_sequential_imperfect','111','§111 Imperfect with Wāw Consecutive'],'i':['verb_sequential_perfect','112','§112 Perfect with Wāw Consecutive'],'h':['verb_imperative','46','§46 Imperative'],'a':['infinitive_absolute','45','§45 Infinitive'],'c':['infinitive_construct','45','§45 Infinitive'],'r':['participle_active','50','§50 Participle'],'s':['participle_passive','50','§50 Participle']};
+    if(code[2]&&tm[code[2]]) add('uhg',tm[code[2]][0],tm[code[2]][1],tm[code[2]][2]);
+    var sm={'q':['stem_qal','43','§43 Qal'],'N':['stem_niphal','51','§51 Niphʿal'],'p':['stem_piel','52','§52 Piʿēl'],'P':['stem_pual','52','§52 Puʿal'],'h':['stem_hiphil','53','§53 Hiphʿîl'],'H':['stem_hophal','53','§53 Hophʿal'],'t':['stem_hithpael','54','§54 Hithpaʿēl']};
+    if(code[1]&&sm[code[1]]) add('ges',sm[code[1]][0],sm[code[1]][1],sm[code[1]][2]);
+    add('uhg','verb','38','§38 General View of the Verb');
+  } else if(pos==='N'){
+    add('uhg','noun_common','79','§79 General View of the Noun');
+    if(code[3]==='c') add('uhg','state_construct','89','§89 Construct State');
+    if(code[3]==='a') add('uhg','state_absolute','89','§89 Absolute and Construct State');
+    if(code[2]==='p') add('uhg','number_plural','87','§87 Plural');
+    if(code[2]==='d') add('uhg','number_dual','88','§88 Dual');
+  } else if(pos==='A'){ add('uhg','adjective','132','§132 Adjective and Substantive');
+  } else if(pos==='P'){
+    var pm={'d':['pronoun_demonstrative','34','§34 Demonstrative Pronoun'],'r':['pronoun_relative','36','§36 Relative Pronoun'],'p':['pronoun_personal','32','§32 Personal Pronoun'],'i':['pronoun_indefinite','37','§37 Interrogative and Indefinite Pronouns']};
+    if(code[1]&&pm[code[1]]) add('uhg',pm[code[1]][0],pm[code[1]][1],pm[code[1]][2]);
+    add('uhg','pronoun','32','§32 Pronouns');
+  } else if(pos==='R'){ add('uhg','preposition','101','§101 Prepositions');
+  } else if(pos==='C'){ add('uhg','conjunction','104','§104 Conjunctions');
+  } else if(pos==='T'){
+    var tp={'a':['particle_definite_article','35','§35 The Article'],'n':['particle_negative','152','§152 Negative Sentences'],'d':['particle_interrogative','150','§150 Interrogative Sentences'],'r':['particle_relative','36','§36 Relative Pronoun'],'i':['particle_interrogative','150','§150 Interrogative Sentences']};
+    if(code[1]&&tp[code[1]]) add('uhg',tp[code[1]][0],tp[code[1]][1],tp[code[1]][2]);
+    add('uhg','particle','99','§99 Particles');
+  } else if(pos==='D'){ add('uhg','adverb','100','§100 Adverbs');
+  } else if(pos==='S'){ add('uhg','suffix_pronominal','33','§33 Pronominal Suffixes'); }
+  return refs;
 }
 
-var currentWords=[], currentRef=null;
+// ─── UTILIDADES ──────────────────────────────────────────────────────────────
+var ICON_OUT='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+var ICON_BOOK='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+var ICON_SEARCH='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 
-function loadVerse(refStr) {
-  var ref = parseRef(refStr);
-  if (!ref) { showError('Referencia no reconocida. Intenta: Gen 1:1, Sal 23:1, Is 53:5'); return; }
-  currentRef=ref; showLoading(true); clearError();
-  document.getElementById('verseArea').innerHTML='';
-  document.getElementById('analysisArea').innerHTML='<div class="analysis-card"><div class="empty-state"><div class="empty-icon">...</div><p>Cargando...</p></div></div>';
-
-  fetch('https://raw.githubusercontent.com/openscriptures/morphhb/master/wlc/'+ref.file+'.xml')
-    .then(function(resp){
-      if (!resp.ok) throw new Error('Archivo no encontrado: '+ref.file+'.xml');
-      return resp.text();
-    })
-    .then(function(xml){
-      var doc = new DOMParser().parseFromString(xml,'application/xml');
-      var chapters = Array.prototype.slice.call(doc.querySelectorAll('chapter'));
-      var chEl = chapters.find(function(c){ return (c.getAttribute('osisID')||'').endsWith('.'+ref.ch); }) || chapters[ref.ch-1];
-      if (!chEl) throw new Error('Capitulo '+ref.ch+' no encontrado.');
-      var verseEl = Array.prototype.slice.call(chEl.querySelectorAll('verse')).find(function(v){ return (v.getAttribute('osisID')||'').endsWith('.'+ref.vs); });
-      if (!verseEl) throw new Error('Versiculo '+ref.vs+' no encontrado.');
-      var words = Array.prototype.slice.call(verseEl.querySelectorAll('w')).map(function(w){
-        return {
-          text: w.textContent.trim(),
-          lemma: w.getAttribute('lemma')||'',
-          morph: (w.getAttribute('morph')||'').replace(/^H/,'')
-        };
-      }).filter(function(w){ return w.text; });
-      currentWords=words;
-      renderVerse(ref,words);
-      showLoading(false);
-      var mode=document.getElementById('versionSel').value;
-      if (mode!=='wlc') loadTranslations(ref,mode);
-    })
-    .catch(function(e){ showLoading(false); showError('Error: '+e.message); });
-}
-
-function renderVerse(ref,words){
-  var html=words.map(function(w,i){ return '<span class="verse-word" data-idx="'+i+'" title="'+(w.morph||'')+'">'+w.text+'</span>'; }).join(' ');
-  document.getElementById('verseArea').innerHTML='<div class="verse-card"><div class="verse-ref">'+ref.display+' '+ref.ch+':'+ref.vs+' - Westminster Leningrad Codex</div><div class="verse-text">'+html+'</div><p class="verse-hint">Haz clic en una palabra para analizar</p><div id="transArea"></div></div>';
-  Array.prototype.slice.call(document.querySelectorAll('.verse-word')).forEach(function(el){
-    el.addEventListener('click',function(){
-      Array.prototype.slice.call(document.querySelectorAll('.verse-word')).forEach(function(e){ e.classList.remove('selected'); });
-      el.classList.add('selected');
-      analyzeWord(parseInt(el.dataset.idx));
-    });
-  });
-}
-
-function loadTranslations(ref,mode){
-  var ta=document.getElementById('transArea'); if(!ta) return;
-  ta.innerHTML='<div class="trans-block"><span class="trans-loading">Cargando traducciones...</span></div>';
-  var wantKJV=(mode==='all'||mode==='kjv');
-  var wantTB=(mode==='all'||mode==='idn'||mode==='tb');
-  var wantBIMK=(mode==='all'||mode==='idn'||mode==='bimk');
-  var idnPromise=(wantTB||wantBIMK)?resolveIndonesianIds():Promise.resolve({});
-  idnPromise.then(function(ids){
-    var fetchers=[];
-    if(wantKJV) fetchers.push(fetchTrans(ref,KJV_ID,'KJV'));
-    if(wantTB) fetchers.push(ids.tb?fetchTrans(ref,ids.tb,'TBI'):Promise.resolve({label:'TBI',na:true}));
-    if(wantBIMK) fetchers.push(ids.bimk?fetchTrans(ref,ids.bimk,'BIMK'):Promise.resolve({label:'BIMK',na:true}));
-    return Promise.all(fetchers);
-  }).then(function(results){
-    ta.innerHTML=results.filter(function(r){ return r&&(r.text||r.na); }).map(function(r){
-      if(r.na) return '<div class="trans-block"><div class="trans-label">'+r.label+'</div><div class="trans-na">No disponible en tu cuenta de API.Bible.</div></div>';
-      var idn=(r.label==='TBI'||r.label==='BIMK');
-      return '<div class="trans-block"><div class="trans-label">'+r.label+'</div><div class="trans-text'+(idn?' idn':'')+'">'+r.text+'</div></div>';
-    }).join('');
-  });
-}
-
-function fetchTrans(ref,bibleId,label){
-  var path='/bibles/'+bibleId+'/verses/'+ref.bookId+'.'+ref.ch+'.'+ref.vs+'?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false';
-  return fetch('/api/bible?path='+encodeURIComponent(path))
-    .then(function(r){ if(!r.ok) return null; return r.json(); })
-    .then(function(d){
-      if (!d) return null;
-      var text=((d.data&&d.data.content)||'').replace(/<[^>]+>/g,'').trim();
-      return text?{label:label,text:text}:null;
-    })
-    .catch(function(){ return null; });
-}
-
-function analyzeWord(idx){
-  var word=currentWords[idx]; if(!word) return;
-  var morphParts=parseMorph(word.morph);
-  var lemma=word.lemma.replace(/H/g,'').replace(/\//g,' / ');
-  var gramRefs=getGrammarRefs(word.morph);
-
-  var morphHtml=morphParts.length
-    ? morphParts.map(function(p){ return '<div class="morph-badge'+(p.hi?' hi':'')+'"><div class="ml">'+p.label+'</div><div class="mv">'+p.value+'</div></div>'; }).join('')
-    : '<div style="padding:8px 0;font-size:13px;color:var(--t3)">Codigo: <code>'+(word.morph||'n/a')+'</code></div>';
-
-  var refChipsHtml=buildRefChips(gramRefs);
-
-  document.getElementById('analysisArea').innerHTML=
-    '<div class="analysis-card">'+
-      '<div class="analysis-header">'+
-        '<div class="analysis-word">'+word.text+'</div>'+
-        '<div class="analysis-meta">Lexema: <span>H'+(lemma||'-')+'</span> &nbsp;-&nbsp; Morph: <code>'+(word.morph||'-')+'</code></div>'+
-      '</div>'+
-      '<div class="morph-grid">'+morphHtml+'</div>'+
-      refChipsHtml+
-      '<div class="tutor-section" id="tutorSection">'+
-        '<div class="source-tabs">'+
-          '<button class="stab active" data-tab="tutor">Mevin</button>'+
-          '<button class="stab" data-tab="uhg">UHG</button>'+
-          '<button class="stab" data-tab="ges">Gesenius</button>'+
-          '<button class="stab" data-tab="etcbc">SHEBANQ</button>'+
-        '</div>'+
-        '<div class="stab-panel active" id="tab-tutor">'+
-          '<div class="tutor-loading" id="tutorLoading">Consultando fuentes gramaticales...</div>'+
-          '<div class="tutor-content" id="tutorContent" style="display:none"></div>'+
-          '<div class="question-row" id="questionRow" style="display:none">'+
-            '<input class="question-input" id="qInput" type="text" placeholder="Pregunta a Mevin..."/>'+
-            '<button class="btn-ask" id="qBtn">Preguntar</button>'+
-          '</div>'+
-        '</div>'+
-        '<div class="stab-panel" id="tab-uhg">'+
-          '<div class="source-loading" id="uhgLoading">Cargando UHG...</div>'+
-          '<div class="source-content" id="uhgContent" style="display:none"></div>'+
-          '<div id="uhgLinks"></div>'+
-        '</div>'+
-        '<div class="stab-panel" id="tab-ges">'+
-          '<div class="source-content" id="gesContent"></div>'+
-        '</div>'+
-        '<div class="stab-panel" id="tab-etcbc">'+
-          '<div class="source-content" id="etcbcContent"></div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-
-  Array.prototype.slice.call(document.querySelectorAll('.stab')).forEach(function(btn){
-    btn.addEventListener('click',function(){
-      Array.prototype.slice.call(document.querySelectorAll('.stab')).forEach(function(b){ b.classList.remove('active'); });
-      Array.prototype.slice.call(document.querySelectorAll('.stab-panel')).forEach(function(p){ p.classList.remove('active'); });
-      btn.classList.add('active');
-      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-    });
-  });
-
-  var etcbcEl = document.getElementById('etcbcContent');
-  if (etcbcEl && currentRef) {
-    var shebanqBook = SHEBANQ_BOOKS[currentRef.idx] || '';
-    var shebanqVerseUrl = 'https://shebanq.ancient-data.org/hebrew/text?book='+shebanqBook+'&chapter='+currentRef.ch+'&verse='+currentRef.vs+'&version=2021&mr=m&tp=txt_p';
-    var svgIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
-    var features = 'sp - pdp - ls - gn - nu - ps - st - vs - vt - lex - gloss - voc_lex - nme - pfm - prs - uvf - function - typ - rela - clause_atom';
-    etcbcEl.innerHTML =
-      '<div style="margin-bottom:12px">'+
-        '<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:6px">SHEBANQ - ETCBC / BHSA 2021</div>'+
-        '<div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px">SHEBANQ es el portal del <strong>Biblia Hebraica Stuttgartensia Amstelodamensis (BHSA)</strong>, base de datos sintactica del hebreo biblico desarrollada por el Eep Talstra Centre for Bible and Computer (VU Amsterdam). Ofrece analisis morfologico y sintactico independiente del OSHB, a nivel de palabra, frase y clausula.</div>'+
-        '<div style="display:flex;flex-direction:column;gap:8px">'+
-          '<a class="source-link" href="'+shebanqVerseUrl+'" target="_blank" rel="noopener">'+svgIcon+' Ver '+currentRef.display+' '+currentRef.ch+':'+currentRef.vs+' en SHEBANQ</a>'+
-          '<a class="source-link" href="https://shebanq.ancient-data.org/hebrew/text?version=2021" target="_blank" rel="noopener">'+svgIcon+' Abrir SHEBANQ (buscar manualmente: '+word.text+')</a>'+
-        '</div>'+
-        '<div style="margin-top:10px;padding:8px 10px;background:var(--bgm);border-radius:var(--rmd);border:.5px solid var(--bdl)">'+
-          '<div style="font-size:11px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Nota sobre busqueda en SHEBANQ</div>'+
-          '<div style="font-size:12px;color:var(--t2);line-height:1.6">SHEBANQ identifica las palabras por node ID interno del BHSA, no por numero Strong. Para ver los datos de esta palabra, abre SHEBANQ, navega al versiculo indicado y haz clic sobre la palabra en el texto hebreo.</div>'+
-        '</div>'+
-      '</div>'+
-      '<hr style="border:none;border-top:.5px solid var(--bdl);margin:10px 0"/>'+
-      '<div style="font-size:12px;color:var(--t3);line-height:1.6"><strong>Features BHSA disponibles</strong> (consultables en SHEBANQ via MQL / Text-Fabric):<br><span style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--t2)">'+features+'</span></div>';
-  }
-
-  var gesRefs=gramRefs.filter(function(r){ return r.ges; });
-  var gesHtml=gesRefs.length
-    ? gesRefs.map(function(r){
-        return '<div style="margin-bottom:10px">'+
-          '<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:4px">'+(r.gtitle||r.label)+'</div>'+
-          '<div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:6px">Gesenius Hebrew Grammar es la gramatica de referencia clasica del hebreo biblico (Kautzsch, 1910). Este tema comienza en el parrafo '+r.ges+' de la edicion Oxford.</div>'+
-          '<a class="source-link" href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar/'+r.ges+'" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Abrir parrafo '+r.ges+' en Wikisource</a>'+
-        '</div>';
-      }).join('<hr style="border:none;border-top:.5px solid var(--bdl);margin:10px 0"/>')
-    : '<p style="font-size:13px;color:var(--t3)">No hay referencias directas del Gesenius para esta categoria morfologica.</p>';
-  document.getElementById('gesContent').innerHTML=gesHtml;
-
-  var uhgPages=[];
-  var seen={};
-  gramRefs.forEach(function(r){ if(r.page && !seen[r.page]){ seen[r.page]=true; uhgPages.push(r.page); } });
-  uhgPages = uhgPages.slice(0,2);
-  fetchUHGAndTutor(word,morphParts,gramRefs,uhgPages);
-}
-
-function fetchUHGAndTutor(word,morphParts,gramRefs,uhgPages){
-  var fetches = uhgPages.map(function(p){
-    return fetch('/api/uhg?page='+p).then(function(r){ return r.json(); }).catch(function(){ return {text:''}; });
-  });
-  Promise.all(fetches).then(function(results){
-    var combined = results.map(function(r){ return r.text||''; }).filter(Boolean).join('\n\n---\n\n');
-    var uhgText = combined.slice(0,5000);
-
-    var uhgEl=document.getElementById('uhgContent');
-    var uhgLoad=document.getElementById('uhgLoading');
-    if (uhgText) {
-      var preview=uhgText.slice(0,1200).replace(/\n/g,'<br>');
-      if(uhgEl){ uhgEl.innerHTML='<div>'+preview+(uhgText.length>1200?'...':'')+'</div>'; uhgEl.style.display='block'; }
-    } else {
-      if(uhgEl){ uhgEl.innerHTML='<p style="color:var(--t3);font-size:13px">No se pudo cargar el contenido del UHG.</p>'; uhgEl.style.display='block'; }
-    }
-    if(uhgLoad) uhgLoad.style.display='none';
-
-    var uhgLinkEl=document.getElementById('uhgLinks');
-    if(uhgLinkEl){
-      var links=gramRefs.filter(function(r){ return r.page; }).map(function(r){
-        return '<a class="source-link" href="https://uhg.readthedocs.io/en/latest/'+r.page+'.html" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'+r.label+'</a>';
-      }).join('');
-      uhgLinkEl.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+links+'</div>';
-    }
-
-    callTutor(word,morphParts,uhgText);
-  }).catch(function(){
-    var uhgLoad=document.getElementById('uhgLoading');
-    if(uhgLoad) uhgLoad.innerHTML='<p style="color:var(--t3);font-size:13px">No se pudo cargar el UHG.</p>';
-    callTutor(word,morphParts,'');
-  });
-}
-
-function callTutor(word,morphParts,uhgContext){
-  var morphSummary=morphParts.map(function(p){ return p.label+': '+p.value; }).join(', ');
-  var context=currentRef ? (currentRef.display+' '+currentRef.ch+':'+currentRef.vs) : 'texto hebreo';
-  var transAreaEl = document.getElementById('transArea');
-  var transContext = transAreaEl ? transAreaEl.innerText.trim() : '';
-
-  var system="Eres Mevin, tutor experto en hebreo biblico (AT), linguistica semitica y exegesis del texto masoretico (WLC). Tienes acceso al unfoldingWord Hebrew Grammar (UHG) y al Gesenius Hebrew Grammar como fuentes de referencia. Explicas en espanol de forma pedagogica, clara y concisa. Usas transliteracion cuando es util. Maximo 200 palabras. Parrafos cortos. Escribe en texto plano: no uses Markdown (nada de asteriscos, almohadillas ni guiones de lista). Cuando cites el UHG o Gesenius, menciona la fuente brevemente.";
-
-  var user='Analiza esta palabra hebrea del texto biblico ('+context+'):\n\nPalabra: '+word.text+'\nCodigo morfologico OSHB: '+(word.morph||'no disponible')+'\nAnalisis decodificado: '+morphSummary+'\nStrong/Lexema: H'+word.lemma;
-  if (transContext) user += '\n\nTraducciones del versiculo:\n'+transContext;
-  if (uhgContext) user += '\n\n--- CONTENIDO DEL unfoldingWord Hebrew Grammar (UHG) PARA ESTA CATEGORIA ---\n'+uhgContext.slice(0,3000)+'\n---';
-  user += '\n\nExplica categoria gramatical, forma, significado en contexto y observacion exegetica relevante. Donde sea pertinente, integra informacion del UHG en tu explicacion.';
-
-  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system:system,messages:[{role:'user',content:user}]})})
-    .then(function(resp){ return resp.json(); })
-    .then(function(data){
-      var text = (data.content && data.content[0] && data.content[0].text) || ('No se pudo obtener explicacion. Detalle: ' + ((data.error && (data.error.message || data.error)) || 'respuesta vacia'));
-      var loading=document.getElementById('tutorLoading');
-      var content=document.getElementById('tutorContent');
-      var qrow=document.getElementById('questionRow');
-      if(loading) loading.style.display='none';
-      if(content){
-        content.innerHTML=renderMd(text);
-        content.style.display='block';
-      }
-      if(qrow) qrow.style.display='flex';
-      var qBtn = document.getElementById('qBtn');
-      var qInput = document.getElementById('qInput');
-      if (qBtn) qBtn.addEventListener('click',askFollowUp);
-      if (qInput) qInput.addEventListener('keydown',function(e){ if(e.key==='Enter') askFollowUp(); });
-    })
-    .catch(function(e){
-      var loading=document.getElementById('tutorLoading');
-      if(loading) loading.innerHTML='<p style="color:#a32d2d;font-size:13px">Error al conectar: '+e.message+'</p>';
-    });
-}
-
-function askFollowUp(){
-  var inp=document.getElementById('qInput');
-  var q=inp.value.trim();
-  if(!q) return;
-  var content=document.getElementById('tutorContent');
-  if(content) content.insertAdjacentHTML('beforeend','<p style="margin-top:12px;padding-top:10px;border-top:.5px solid var(--bdl);color:var(--t2);font-style:italic">"'+q+'"</p><p id="followLoading" class="tutor-loading">Procesando...</p>');
-  inp.value='';
-  var selEl=document.querySelector('.verse-word.selected');
-  var idx=selEl?parseInt(selEl.dataset.idx):-1;
-  var word=idx>=0?currentWords[idx]:null;
-  var ctx = word ? ('La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+(currentRef?currentRef.display:'')+' '+(currentRef?currentRef.ch:'')+':'+(currentRef?currentRef.vs:'')+'.') : '';
-
-  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system:'Eres Mevin, tutor experto en hebreo biblico. Responde en espanol, max 150 palabras, pedagogico y directo. Escribe en texto plano, sin Markdown. Puedes citar el UHG o Gesenius si es relevante.',messages:[{role:'user',content:ctx+'\n\nPregunta: '+q}]})})
-    .then(function(resp){ return resp.json(); })
-    .then(function(data){
-      var text = (data.content && data.content[0] && data.content[0].text) || ('Error: ' + ((data.error && (data.error.message || data.error)) || 'respuesta vacia'));
-      var el=document.getElementById('followLoading');
-      if(el) el.outerHTML='<div style="padding:4px 0 0">'+renderMd(text)+'</div>';
-    })
-    .catch(function(e){
-      var el=document.getElementById('followLoading');
-      if(el) el.outerHTML='<p style="color:#a32d2d;font-size:13px">Error: '+e.message+'</p>';
-    });
-}
-
-function escHtml(x){ return x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escHtml(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function inlineMd(x){
-  return x
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/__(.+?)__/g,'<strong>$1</strong>')
-    .replace(/(^|[^*])\*(?!\s)(.+?)\*(?!\*)/g,'$1<em>$2</em>')
-    .replace(/`([^`]+)`/g,'<em>$1</em>');
+  return x.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+          .replace(/__(.+?)__/g,'<strong>$1</strong>')
+          .replace(/(^|[^*])\*(?!\s)(.+?)\*(?!\*)/g,'$1<em>$2</em>')
+          .replace(/`([^`]+)`/g,'<em>$1</em>');
 }
+// Convierte Markdown en HTML limpio para que no se vean asteriscos ni almohadillas.
 function renderMd(text){
   var lines=escHtml(text||'').split('\n'), out=[], list=null;
   function closeList(){ if(list){ out.push('</'+list+'>'); list=null; } }
@@ -638,8 +373,8 @@ function renderMd(text){
     if(h){ closeList(); out.push('<p><strong>'+inlineMd(h[1])+'</strong></p>'); return; }
     var ul=l.match(/^[-*•]\s+(.*)$/), ol=l.match(/^\d+[.)]\s+(.*)$/);
     if(ul||ol){
-      var t=ul?'ul':'ol';
-      if(list!==t){ closeList(); out.push('<'+t+' style="margin:0 0 8px 20px">'); list=t; }
+      var tag=ul?'ul':'ol';
+      if(list!==tag){ closeList(); out.push('<'+tag+' style="margin:0 0 8px 20px">'); list=tag; }
       out.push('<li>'+inlineMd((ul||ol)[1])+'</li>'); return;
     }
     closeList(); out.push('<p>'+inlineMd(l)+'</p>');
@@ -648,16 +383,346 @@ function renderMd(text){
   return out.join('');
 }
 
-function quickLoad(r){ document.getElementById('refInput').value=r; loadVerse(r); }
-function showLoading(v){ document.getElementById('loadingBar').style.display=v?'block':'none'; }
-function showError(msg){ var b=document.getElementById('errorBox'); b.innerHTML='<div class="error-msg">! '+msg+'</div>'; b.style.display='block'; }
-function clearError(){ var b=document.getElementById('errorBox'); b.innerHTML=''; b.style.display='none'; }
+// Llamada al modelo a través de la función /api/claude-tutor
+function callClaude(system,user,maxTokens){
+  return fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({max_tokens:maxTokens||1000,system:system,messages:[{role:'user',content:user}]})})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var txt=data&&data.content&&data.content[0]&&data.content[0].text;
+      if(txt) return txt;
+      var err=(data&&data.error&&(data.error.message||data.error))||t('emptyResp');
+      throw new Error(typeof err==='string'?err:JSON.stringify(err));
+    });
+}
 
+function parseRef(ref){
+  ref=ref.trim().replace(/\s+/g,' ');
+  var m=ref.match(/^(\d?\s*[a-záéíóúñü]+)\s*(\d+)\s*[:\.\s]\s*(\d+)$/i);
+  if(!m) return null;
+  var key=m[1].toLowerCase().replace(/\s/g,'').replace(/[áä]/g,'a').replace(/[éë]/g,'e').replace(/[íï]/g,'i').replace(/[óö]/g,'o').replace(/[úü]/g,'u').replace(/ñ/g,'n');
+  var idx=BOOK_IDX[key];
+  if(idx===undefined) return null;
+  return {idx:idx,file:BOOK_FILE[idx],bookId:BOOK_API[idx],ch:parseInt(m[2],10),vs:parseInt(m[3],10)};
+}
+function refText(ref){ return bookName(ref.idx)+' '+ref.ch+':'+ref.vs; }
+
+// ─── ESTADO ──────────────────────────────────────────────────────────────────
+var currentWords=[], currentRef=null, selectedIdx=-1, analysisSeq=0;
+var UHG_TR_CACHE={};
+
+function showLoading(v){ document.getElementById('loadingBar').style.display=v?'block':'none'; }
+function showError(msg){ var b=document.getElementById('errorBox'); b.innerHTML='<div class="error-msg">'+escHtml(msg)+'</div>'; b.style.display='block'; }
+function clearError(){ var b=document.getElementById('errorBox'); b.innerHTML=''; b.style.display='none'; }
+function emptyPanel(icon,msg){
+  document.getElementById('analysisArea').innerHTML='<div class="analysis-card"><div class="empty-state"><div class="empty-icon">'+icon+'</div><p>'+escHtml(msg)+'</p></div></div>';
+}
+
+// ─── TEXTO HEBREO (WLC) ──────────────────────────────────────────────────────
+function loadVerse(refStr){
+  var ref=parseRef(refStr);
+  if(!ref){ showError(t('refBad')); return; }
+  currentRef=ref; selectedIdx=-1; showLoading(true); clearError();
+  document.getElementById('verseArea').innerHTML='';
+  emptyPanel('&#8987;',t('loading'));
+  fetch('https://raw.githubusercontent.com/openscriptures/morphhb/master/wlc/'+ref.file+'.xml')
+    .then(function(r){ if(!r.ok) throw new Error(t('fileNF')+ref.file+'.xml'); return r.text(); })
+    .then(function(xml){
+      var doc=new DOMParser().parseFromString(xml,'application/xml');
+      var chapters=Array.prototype.slice.call(doc.querySelectorAll('chapter'));
+      var chEl=chapters.find(function(c){ return (c.getAttribute('osisID')||'').endsWith('.'+ref.ch); });
+      if(!chEl) throw new Error(t('chNF')+ref.ch);
+      var verseEl=Array.prototype.slice.call(chEl.querySelectorAll('verse')).find(function(v){ return (v.getAttribute('osisID')||'').endsWith('.'+ref.vs); });
+      if(!verseEl) throw new Error(t('vsNF')+ref.vs);
+      currentWords=Array.prototype.slice.call(verseEl.querySelectorAll('w')).map(function(w){
+        return {text:w.textContent.trim(), lemma:w.getAttribute('lemma')||'', morph:(w.getAttribute('morph')||'').replace(/^H/,'')};
+      }).filter(function(w){ return w.text; });
+      showLoading(false);
+      renderVerse();
+      emptyPanel('&#128214;',t('empty'));
+    })
+    .catch(function(e){ showLoading(false); showError(t('errPrefix')+e.message); emptyPanel('&#128214;',t('empty')); });
+}
+
+function renderVerse(){
+  if(!currentRef) return;
+  var html=currentWords.map(function(w,i){
+    return '<span class="verse-word'+(i===selectedIdx?' selected':'')+'" data-idx="'+i+'" title="'+escHtml(w.morph||'')+'">'+w.text+'</span>';
+  }).join(' ');
+  document.getElementById('verseArea').innerHTML='<div class="verse-card"><div class="verse-ref">'+escHtml(refText(currentRef))+' — Westminster Leningrad Codex</div><div class="verse-text">'+html+'</div><p class="verse-hint">'+escHtml(t('hint'))+'</p><div id="transArea"></div></div>';
+  Array.prototype.slice.call(document.querySelectorAll('.verse-word')).forEach(function(el){
+    el.addEventListener('click',function(){
+      Array.prototype.slice.call(document.querySelectorAll('.verse-word')).forEach(function(e){ e.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedIdx=parseInt(el.dataset.idx,10);
+      analyzeWord(selectedIdx);
+    });
+  });
+  var mode=document.getElementById('versionSel').value;
+  if(mode!=='wlc') loadTranslations(currentRef,mode);
+}
+
+// ─── TRADUCCIONES ────────────────────────────────────────────────────────────
+function loadTranslations(ref,mode){
+  var ta=document.getElementById('transArea'); if(!ta) return;
+  if(mode==='wlc'){ ta.innerHTML=''; return; }
+  ta.innerHTML='<div class="trans-block"><span class="trans-loading">'+escHtml(t('loadingTrans'))+'</span></div>';
+  var jobs=[];
+  if(mode==='all'||mode==='kjv') jobs.push(fetchKJV(ref));
+  if(mode==='all'||mode==='idn'||mode==='tb') jobs.push(fetchSabda(ref,'tb','TBI'));
+  if(mode==='all'||mode==='idn'||mode==='bimk') jobs.push(fetchSabda(ref,'bis','BIMK'));
+  Promise.all(jobs).then(function(results){
+    if(ref!==currentRef) return;
+    var box=document.getElementById('transArea'); if(!box) return;
+    box.innerHTML=results.map(function(r){
+      var body=r.text ? '<div class="trans-text'+(r.label!=='KJV'?' idn':'')+'">'+escHtml(r.text)+'</div>' : '<div class="trans-na">'+escHtml(t('transNA'))+'</div>';
+      return '<div class="trans-block"><div class="trans-label">'+r.label+'</div>'+body+'</div>';
+    }).join('');
+  });
+}
+function fetchKJV(ref){
+  var path='/bibles/'+KJV_ID+'/verses/'+ref.bookId+'.'+ref.ch+'.'+ref.vs+'?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false';
+  return fetch('/api/bible?path='+encodeURIComponent(path))
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(d){ return {label:'KJV',text:(((d&&d.data&&d.data.content)||'').replace(/<[^>]+>/g,'').trim())}; })
+    .catch(function(){ return {label:'KJV',text:''}; });
+}
+function fetchSabda(ref,ver,label){
+  var q='book='+encodeURIComponent(SABDA_ABBR[ref.idx])+'&ch='+ref.ch+'&vs='+ref.vs+'&ver='+ver;
+  return fetch('/api/sabda?'+q)
+    .then(function(r){ return r.json(); })
+    .then(function(d){ return {label:label,text:(d&&d.text)||''}; })
+    .catch(function(){ return {label:label,text:''}; });
+}
+
+// ─── ANÁLISIS DE PALABRA ─────────────────────────────────────────────────────
+function buildRefChips(refs){
+  var html='<div class="refs-panel"><span class="refs-label">'+escHtml(t('refs'))+'</span>';
+  if(currentRef){
+    var url='https://shebanq.ancient-data.org/hebrew/text?book='+SHEBANQ_BOOKS[currentRef.idx]+'&chapter='+currentRef.ch+'&verse='+currentRef.vs+'&version=2021&mr=m&tp=txt_p';
+    html+='<a class="ref-chip etcbc" href="'+url+'" target="_blank" rel="noopener">'+ICON_SEARCH+'SHEBANQ / BHSA</a>';
+  }
+  refs.forEach(function(r){
+    if(r.type==='uhg') html+='<a class="ref-chip uhg" href="https://uhg.readthedocs.io/en/latest/'+r.page+'.html" target="_blank" rel="noopener">'+ICON_BOOK+'UHG: '+escHtml(refLabel(r))+'</a>';
+    else html+='<a class="ref-chip ges" href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar/'+r.ges+'" target="_blank" rel="noopener">'+ICON_BOOK+'Gesenius: '+escHtml(r.gtitle)+'</a>';
+  });
+  return html+'</div>';
+}
+
+function analyzeWord(idx){
+  var word=currentWords[idx]; if(!word) return;
+  var seq=++analysisSeq;
+  var morphParts=parseMorph(word.morph);
+  var lemma=word.lemma.replace(/H/g,'').replace(/\//g,' / ');
+  var gramRefs=getGrammarRefs(word.morph);
+  var morphHtml=morphParts.length
+    ? morphParts.map(function(p){ return '<div class="morph-badge'+(p.hi?' hi':'')+'"><div class="ml">'+escHtml(p.label)+'</div><div class="mv">'+escHtml(p.value)+'</div></div>'; }).join('')
+    : '<div style="padding:8px 0;font-size:13px;color:var(--t3)">'+t('code')+': <code>'+escHtml(word.morph||'n/a')+'</code></div>';
+
+  document.getElementById('analysisArea').innerHTML=
+    '<div class="analysis-card">'+
+      '<div class="analysis-header"><div class="analysis-word">'+word.text+'</div>'+
+      '<div class="analysis-meta">'+t('lexeme')+': <span>H'+escHtml(lemma||'-')+'</span> &nbsp;·&nbsp; Morph: <code>'+escHtml(word.morph||'-')+'</code></div></div>'+
+      '<div class="morph-grid">'+morphHtml+'</div>'+
+      buildRefChips(gramRefs)+
+      '<div class="tutor-section">'+
+        '<div class="source-tabs">'+
+          '<button class="stab active" data-tab="tutor">&#10022; Mevin</button>'+
+          '<button class="stab" data-tab="uhg">UHG</button>'+
+          '<button class="stab" data-tab="ges">Gesenius</button>'+
+          '<button class="stab" data-tab="etcbc">SHEBANQ</button>'+
+        '</div>'+
+        '<div class="stab-panel active" id="tab-tutor">'+
+          '<div class="tutor-loading" id="tutorLoading">'+escHtml(t('tutorLoading'))+'</div>'+
+          '<div class="tutor-content" id="tutorContent" style="display:none"></div>'+
+          '<div class="question-row" id="questionRow" style="display:none">'+
+            '<input class="question-input" id="qInput" type="text" placeholder="'+escHtml(t('askPh'))+'"/>'+
+            '<button class="btn-ask" id="qBtn">'+escHtml(t('ask'))+'</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="stab-panel" id="tab-uhg"><div class="source-loading" id="uhgLoading">'+escHtml(t('uhgLoading'))+'</div><div class="source-content" id="uhgContent" style="display:none"></div><div id="uhgLinks"></div></div>'+
+        '<div class="stab-panel" id="tab-ges"><div class="source-content" id="gesContent"></div></div>'+
+        '<div class="stab-panel" id="tab-etcbc"><div class="source-content" id="etcbcContent"></div></div>'+
+      '</div>'+
+    '</div>';
+
+  Array.prototype.slice.call(document.querySelectorAll('.stab')).forEach(function(btn){
+    btn.addEventListener('click',function(){
+      Array.prototype.slice.call(document.querySelectorAll('.stab')).forEach(function(b){ b.classList.remove('active'); });
+      Array.prototype.slice.call(document.querySelectorAll('.stab-panel')).forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+  document.getElementById('qBtn').addEventListener('click',askFollowUp);
+  document.getElementById('qInput').addEventListener('keydown',function(e){ if(e.key==='Enter') askFollowUp(); });
+
+  // SHEBANQ
+  var shUrl='https://shebanq.ancient-data.org/hebrew/text?book='+SHEBANQ_BOOKS[currentRef.idx]+'&chapter='+currentRef.ch+'&verse='+currentRef.vs+'&version=2021&mr=m&tp=txt_p';
+  document.getElementById('etcbcContent').innerHTML=
+    '<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:6px">SHEBANQ — ETCBC / BHSA 2021</div>'+
+    '<div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px">'+t('shbIntro')+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+      '<a class="source-link" href="'+shUrl+'" target="_blank" rel="noopener">'+ICON_OUT+' '+escHtml(t('shbSee',{ref:refText(currentRef)}))+'</a>'+
+      '<a class="source-link" href="https://shebanq.ancient-data.org/hebrew/text?version=2021" target="_blank" rel="noopener">'+ICON_OUT+' '+t('shbOpen',{w:word.text})+'</a>'+
+    '</div>'+
+    '<div style="margin-top:10px;padding:8px 10px;background:var(--bgs);border-radius:var(--rmd);border:.5px solid var(--bdl)">'+
+      '<div style="font-size:11px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">'+escHtml(t('shbNoteT'))+'</div>'+
+      '<div style="font-size:12px;color:var(--t2);line-height:1.6">'+escHtml(t('shbNote'))+'</div>'+
+    '</div>'+
+    '<hr style="border:none;border-top:.5px solid var(--bdl);margin:10px 0"/>'+
+    '<div style="font-size:12px;color:var(--t3);line-height:1.6">'+escHtml(t('shbFeat'))+'<br><span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--t2)">sp · pdp · ls · gn · nu · ps · st · vs · vt · lex · gloss · voc_lex · nme · pfm · prs · uvf · function · typ · rela · clause_atom</span></div>';
+
+  // Gesenius
+  var gesRefs=gramRefs.filter(function(r){ return r.ges; });
+  document.getElementById('gesContent').innerHTML=gesRefs.length
+    ? gesRefs.map(function(r){
+        return '<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:4px">'+escHtml(r.gtitle)+'</div>'+
+          '<div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:6px">'+escHtml(t('gesIntro',{n:r.ges}))+'</div>'+
+          '<a class="source-link" href="https://en.wikisource.org/wiki/Gesenius%27_Hebrew_Grammar/'+r.ges+'" target="_blank" rel="noopener">'+ICON_OUT+escHtml(t('gesOpen',{n:r.ges}))+'</a></div>';
+      }).join('<hr style="border:none;border-top:.5px solid var(--bdl);margin:10px 0"/>')
+    : '<p style="font-size:13px;color:var(--t3)">'+escHtml(t('gesNone'))+'</p>';
+
+  // UHG + tutor
+  var pages=[], seen={};
+  gramRefs.forEach(function(r){ if(r.page&&!seen[r.page]){ seen[r.page]=true; pages.push(r.page); } });
+  document.getElementById('uhgLinks').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+
+    gramRefs.map(function(r){ return '<a class="source-link" href="https://uhg.readthedocs.io/en/latest/'+r.page+'.html" target="_blank" rel="noopener">'+ICON_OUT+escHtml(refLabel(r))+'</a>'; }).join('')+'</div>';
+  loadUHGAndTutor(word,morphParts,pages.slice(0,2),seq);
+}
+
+function loadUHGAndTutor(word,morphParts,pages,seq){
+  Promise.all(pages.map(function(p){
+    return fetch('/api/uhg?page='+p).then(function(r){ return r.json(); }).catch(function(){ return {text:''}; });
+  })).then(function(results){
+    if(seq!==analysisSeq) return;
+    var uhgText=results.map(function(r){ return r.text||''; }).filter(Boolean).join('\n\n').slice(0,5000);
+    showUHG(uhgText,pages,seq);
+    callTutor(word,morphParts,uhgText,seq);
+  });
+}
+
+function showUHG(uhgText,pages,seq){
+  var el=document.getElementById('uhgContent'), ld=document.getElementById('uhgLoading');
+  if(!el) return;
+  if(!uhgText){ ld.style.display='none'; el.innerHTML='<p style="color:var(--t3);font-size:13px">'+escHtml(t('uhgFail'))+'</p>'; el.style.display='block'; return; }
+  var preview=uhgText.slice(0,1500);
+  if(LANG!=='id'){
+    ld.style.display='none';
+    el.innerHTML=renderMd(preview+(uhgText.length>1500?' …':'')); el.style.display='block';
+    return;
+  }
+  // Modo indonesio: traducir el extracto del UHG
+  var key=pages.join('|');
+  var done=function(tr){
+    if(seq!==analysisSeq) return;
+    ld.style.display='none';
+    el.innerHTML=renderMd(tr)+'<div class="src-note">'+escHtml(t('uhgNote'))+'</div>'; el.style.display='block';
+  };
+  if(UHG_TR_CACHE[key]){ done(UHG_TR_CACHE[key]); return; }
+  ld.textContent=t('uhgTranslating');
+  callClaude('Terjemahkan kutipan tata bahasa Ibrani berikut dari bahasa Inggris ke bahasa Indonesia akademis yang jelas dan wajar. Pertahankan kata Ibrani, transliterasi, singkatan, dan rujukan ayat apa adanya. Gunakan istilah linguistik yang lazim dalam bahasa Indonesia. Keluarkan hanya terjemahannya dalam teks biasa, tanpa Markdown dan tanpa komentar tambahan.',
+    preview, 2000)
+    .then(function(tr){ UHG_TR_CACHE[key]=tr; done(tr); })
+    .catch(function(){
+      if(seq!==analysisSeq) return;
+      ld.style.display='none';
+      el.innerHTML=renderMd(preview); el.style.display='block';
+    });
+}
+
+// ─── TUTOR ───────────────────────────────────────────────────────────────────
+function tutorSystem(short){
+  if(LANG==='id'){
+    return short
+      ? 'Anda adalah Mevin, tutor ahli bahasa Ibrani Alkitab. Jawablah dalam bahasa Indonesia, maksimal 150 kata, secara pedagogis dan langsung. Anda boleh mengutip UHG atau Gesenius bila relevan. Tulis dalam teks biasa, tanpa Markdown.'
+      : 'Anda adalah Mevin, tutor ahli bahasa Ibrani Alkitab (Perjanjian Lama), linguistik Semitik, dan eksegesis teks Masoret (WLC). Anda memakai unfoldingWord Hebrew Grammar (UHG) dan Gesenius\u2019 Hebrew Grammar sebagai rujukan; keduanya berbahasa Inggris, jadi sampaikan isinya dalam bahasa Indonesia dengan istilah teknis yang lazim. Jelaskan dalam bahasa Indonesia secara pedagogis, jelas, dan ringkas. Gunakan transliterasi bila membantu. Maksimal 200 kata, paragraf pendek. Tulis dalam teks biasa: jangan gunakan Markdown (tanpa tanda bintang, tanda pagar, atau tanda hubung daftar). Saat mengutip UHG atau Gesenius, sebutkan sumbernya secara singkat.';
+  }
+  return short
+    ? 'Eres Mevin, tutor experto en hebreo bíblico. Responde en español, máximo 150 palabras, de forma pedagógica y directa. Puedes citar el UHG o Gesenius si es relevante. Escribe en texto plano, sin Markdown.'
+    : 'Eres Mevin, tutor experto en hebreo bíblico (AT), lingüística semítica y exégesis del texto masorético (WLC). Usas el unfoldingWord Hebrew Grammar (UHG) y la Gesenius\u2019 Hebrew Grammar como fuentes de referencia. Explicas en español de forma pedagógica, clara y concisa. Usas transliteración cuando es útil. Máximo 200 palabras, párrafos cortos. Escribe en texto plano: no uses Markdown (nada de asteriscos, almohadillas ni guiones de lista). Cuando cites el UHG o Gesenius, menciona la fuente brevemente.';
+}
+
+function callTutor(word,morphParts,uhgContext,seq){
+  var morphSummary=morphParts.map(function(p){ return p.label+': '+p.value; }).join(', ');
+  var ta=document.getElementById('transArea');
+  var trans=ta?(ta.innerText||ta.textContent||'').trim():'';
+  var user;
+  if(LANG==='id'){
+    user='Analisislah kata Ibrani ini dari teks Alkitab ('+refText(currentRef)+'):\n\nKata: '+word.text+'\nKode morfologi OSHB: '+(word.morph||'tidak tersedia')+'\nAnalisis: '+morphSummary+'\nStrong/Leksem: H'+word.lemma;
+    if(trans) user+='\n\nTerjemahan ayat:\n'+trans;
+    if(uhgContext) user+='\n\n--- KUTIPAN unfoldingWord Hebrew Grammar (UHG, bahasa Inggris) ---\n'+uhgContext.slice(0,3000)+'\n---';
+    user+='\n\nJelaskan kategori gramatikal, bentuk, makna dalam konteks, dan catatan eksegetis yang relevan. Bila sesuai, gunakan informasi dari UHG dan bandingkan dengan terjemahan TB/BIMK.';
+  } else {
+    user='Analiza esta palabra hebrea del texto bíblico ('+refText(currentRef)+'):\n\nPalabra: '+word.text+'\nCódigo morfológico OSHB: '+(word.morph||'no disponible')+'\nAnálisis: '+morphSummary+'\nStrong/Lexema: H'+word.lemma;
+    if(trans) user+='\n\nTraducciones del versículo:\n'+trans;
+    if(uhgContext) user+='\n\n--- EXTRACTO DEL unfoldingWord Hebrew Grammar (UHG) ---\n'+uhgContext.slice(0,3000)+'\n---';
+    user+='\n\nExplica categoría gramatical, forma, significado en contexto y una observación exegética relevante. Donde sea pertinente, integra información del UHG.';
+  }
+  callClaude(tutorSystem(false),user,1000)
+    .then(function(text){ showTutor(renderMd(text),seq); })
+    .catch(function(e){ showTutor('<p style="color:#a32d2d;font-size:13px">'+escHtml(t('noExpl')+e.message)+'</p>',seq); });
+}
+function showTutor(html,seq){
+  if(seq!==analysisSeq) return;
+  var ld=document.getElementById('tutorLoading'), c=document.getElementById('tutorContent'), q=document.getElementById('questionRow');
+  if(ld) ld.style.display='none';
+  if(c){ c.innerHTML=html; c.style.display='block'; }
+  if(q) q.style.display='flex';
+}
+
+function askFollowUp(){
+  var inp=document.getElementById('qInput'); var q=inp.value.trim(); if(!q) return;
+  var content=document.getElementById('tutorContent'); var seq=analysisSeq;
+  var holderId='follow'+Date.now();
+  content.insertAdjacentHTML('beforeend','<p style="margin-top:12px;padding-top:10px;border-top:.5px solid var(--bdl);color:var(--t2);font-style:italic">\u201C'+escHtml(q)+'\u201D</p><div id="'+holderId+'" class="tutor-loading">'+escHtml(t('processing'))+'</div>');
+  inp.value='';
+  var word=currentWords[selectedIdx];
+  var ctx=word?(LANG==='id'
+    ? 'Kata yang dibahas adalah "'+word.text+'" (morf: '+word.morph+', H'+word.lemma+') dalam '+refText(currentRef)+'.'
+    : 'La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+refText(currentRef)+'.'):'';
+  callClaude(tutorSystem(true),ctx+'\n\n'+(LANG==='id'?'Pertanyaan: ':'Pregunta: ')+q,800)
+    .then(function(text){ var el=document.getElementById(holderId); if(el&&seq===analysisSeq){ el.className=''; el.innerHTML=renderMd(text); } })
+    .catch(function(e){ var el=document.getElementById(holderId); if(el){ el.className=''; el.innerHTML='<p style="color:#a32d2d;font-size:13px">'+escHtml(t('connErr')+e.message)+'</p>'; } });
+}
+
+// ─── CAMBIO DE IDIOMA ────────────────────────────────────────────────────────
+function applyLang(){
+  document.documentElement.lang=LANG;
+  Array.prototype.slice.call(document.querySelectorAll('[data-i18n]')).forEach(function(el){ el.textContent=t(el.getAttribute('data-i18n')); });
+  document.getElementById('refInput').placeholder=t('placeholder');
+  document.getElementById('footer').innerHTML=t('footer');
+  Array.prototype.slice.call(document.querySelectorAll('.lang-btn')).forEach(function(b){ b.classList.toggle('active',b.dataset.lang===LANG); });
+  document.getElementById('quickTags').innerHTML=QUICK[LANG].map(function(r){ return '<span class="tag" data-ref="'+r+'">'+r+'</span>'; }).join('');
+  Array.prototype.slice.call(document.querySelectorAll('#quickTags .tag')).forEach(function(el){
+    el.addEventListener('click',function(){ quickLoad(el.dataset.ref); });
+  });
+}
+function setLang(lang){
+  if(lang===LANG) return;
+  LANG=lang;
+  try{ localStorage.setItem('mevin-lang',lang); }catch(e){}
+  applyLang();
+  clearError();
+  if(currentRef){
+    renderVerse();
+    if(selectedIdx>=0) analyzeWord(selectedIdx); else emptyPanel('&#128214;',t('empty'));
+  } else emptyPanel('&#128214;',t('empty'));
+}
+
+function quickLoad(r){ document.getElementById('refInput').value=r; loadVerse(r); }
+
+Array.prototype.slice.call(document.querySelectorAll('.lang-btn')).forEach(function(b){
+  b.addEventListener('click',function(){ setLang(b.dataset.lang); });
+});
 document.getElementById('loadBtn').addEventListener('click',function(){ loadVerse(document.getElementById('refInput').value); });
 document.getElementById('refInput').addEventListener('keydown',function(e){ if(e.key==='Enter') loadVerse(e.target.value); });
-document.getElementById('versionSel').addEventListener('change',function(){ if(currentRef) loadTranslations(currentRef,document.getElementById('versionSel').value); });
+document.getElementById('versionSel').addEventListener('change',function(){ if(currentRef) loadTranslations(currentRef,this.value); });
 
-loadVerse('Gen 1:1');
+applyLang();
+var startRef=QUICK[LANG][0];
+document.getElementById('refInput').value=startRef;
+loadVerse(startRef);
 </script>
 </body>
 </html>
