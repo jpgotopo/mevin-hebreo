@@ -59,7 +59,7 @@
     .verse-hint{font-size:12px;color:var(--t3);margin-top:10px;text-align:center}
     .trans-block{margin-top:10px;padding-top:10px;border-top:.5px solid var(--bdl)}
     .trans-label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
-    .trans-text{font-size:14px;color:var(--t2);line-height:1.65}.trans-text.rvr{font-style:italic}
+    .trans-text{font-size:14px;color:var(--t2);line-height:1.65}.trans-text.idn{font-style:italic}.trans-na{font-size:12px;color:var(--t3);font-style:italic}
     .trans-loading{font-size:13px;color:var(--t3);font-style:italic}
     .analysis-card{background:var(--bgs);border:.5px solid var(--bd);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh)}
     .analysis-header{padding:14px 16px;background:var(--bgm);border-bottom:.5px solid var(--bdl)}
@@ -113,7 +113,7 @@
 <nav class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#"><span class="brand-heb">&#1502;&#1461;&#1489;&#1460;&#1503;</span><span class="brand-name">Mevin</span><span class="brand-badge">hebreo biblico</span></a>
-    <span class="topbar-desc">WLC - morfologia OSHB - UHG - Gesenius - SHEBANQ - KJV / RVR60</span>
+    <span class="topbar-desc">WLC - morfologia OSHB - UHG - Gesenius - SHEBANQ - KJV / TBI / BIMK</span>
   </div>
 </nav>
 
@@ -124,10 +124,12 @@
       <div class="search-row">
         <input class="ref-input" id="refInput" type="text" placeholder="Ej: Gen 1:1" value="Gen 1:1"/>
         <select class="version-select" id="versionSel">
-          <option value="both">WLC + KJV + RVR60</option>
-          <option value="wlc">Solo WLC</option>
+          <option value="all">WLC + KJV + TBI + BIMK</option>
+          <option value="idn">WLC + TBI + BIMK</option>
           <option value="kjv">WLC + KJV</option>
-          <option value="rvr">WLC + RVR60</option>
+          <option value="tb">WLC + TBI</option>
+          <option value="bimk">WLC + BIMK</option>
+          <option value="wlc">Solo WLC</option>
         </select>
         <button class="btn" id="loadBtn">Cargar</button>
       </div>
@@ -169,7 +171,27 @@
 </footer>
 
 <script>
-var KJV_ID='de4e12af7f28f599-02', RVR_ID='b32b9d1b64b4ef29-01';
+var KJV_ID='de4e12af7f28f599-02';
+// Los IDs de TB y BIMK en API.Bible se detectan automaticamente consultando las Biblias en indonesio
+var IDN_IDS=null;
+function norm(x){ return (x||'').toString().toUpperCase().trim(); }
+function resolveIndonesianIds(){
+  if (IDN_IDS) return Promise.resolve(IDN_IDS);
+  return fetch('/api/bible?path='+encodeURIComponent('/bibles?language=ind'))
+    .then(function(r){ return r.ok ? r.json() : {data:[]}; })
+    .then(function(d){
+      var list=(d&&d.data)||[];
+      var tb=null, bimk=null;
+      list.forEach(function(b){
+        var ab=norm(b.abbreviation), abl=norm(b.abbreviationLocal), nm=norm(b.name)+' '+norm(b.nameLocal);
+        if(!tb && (ab==='TB'||abl==='TB'||ab==='TBI'||abl==='TBI'||(nm.indexOf('TERJEMAHAN BARU')>=0 && nm.indexOf('EDISI')<0))) tb=b.id;
+        if(!bimk && (ab==='BIMK'||abl==='BIMK'||ab==='BIS'||abl==='BIS'||nm.indexOf('MASA KINI')>=0)) bimk=b.id;
+      });
+      IDN_IDS={tb:tb,bimk:bimk};
+      return IDN_IDS;
+    })
+    .catch(function(){ IDN_IDS={tb:null,bimk:null}; return IDN_IDS; });
+}
 
 var BOOK_FILE=['Gen','Exod','Lev','Num','Deut','Josh','Judg','Ruth','1Sam','2Sam','1Kgs','2Kgs','1Chr','2Chr','Ezra','Neh','Esth','Job','Ps','Prov','Eccl','Song','Isa','Jer','Lam','Ezek','Dan','Hos','Joel','Amos','Obad','Jonah','Mic','Nah','Hab','Zeph','Hag','Zech','Mal'];
 var BOOK_API=['GEN','EXO','LEV','NUM','DEU','JOS','JDG','RUT','1SA','2SA','1KI','2KI','1CH','2CH','EZR','NEH','EST','JOB','PSA','PRO','ECC','SNG','ISA','JER','LAM','EZK','DAN','HOS','JOL','AMO','OBA','JON','MIC','NAM','HAB','ZEP','HAG','ZEC','MAL'];
@@ -370,12 +392,21 @@ function renderVerse(ref,words){
 function loadTranslations(ref,mode){
   var ta=document.getElementById('transArea'); if(!ta) return;
   ta.innerHTML='<div class="trans-block"><span class="trans-loading">Cargando traducciones...</span></div>';
-  var fetchers=[];
-  if(mode==='both'||mode==='kjv') fetchers.push(fetchTrans(ref,KJV_ID,'KJV'));
-  if(mode==='both'||mode==='rvr') fetchers.push(fetchTrans(ref,RVR_ID,'RVR60'));
-  Promise.all(fetchers).then(function(results){
-    ta.innerHTML=results.filter(function(r){ return r&&r.text; }).map(function(r){
-      return '<div class="trans-block"><div class="trans-label">'+r.label+'</div><div class="trans-text'+(r.label==='RVR60'?' rvr':'')+'">'+r.text+'</div></div>';
+  var wantKJV=(mode==='all'||mode==='kjv');
+  var wantTB=(mode==='all'||mode==='idn'||mode==='tb');
+  var wantBIMK=(mode==='all'||mode==='idn'||mode==='bimk');
+  var idnPromise=(wantTB||wantBIMK)?resolveIndonesianIds():Promise.resolve({});
+  idnPromise.then(function(ids){
+    var fetchers=[];
+    if(wantKJV) fetchers.push(fetchTrans(ref,KJV_ID,'KJV'));
+    if(wantTB) fetchers.push(ids.tb?fetchTrans(ref,ids.tb,'TBI'):Promise.resolve({label:'TBI',na:true}));
+    if(wantBIMK) fetchers.push(ids.bimk?fetchTrans(ref,ids.bimk,'BIMK'):Promise.resolve({label:'BIMK',na:true}));
+    return Promise.all(fetchers);
+  }).then(function(results){
+    ta.innerHTML=results.filter(function(r){ return r&&(r.text||r.na); }).map(function(r){
+      if(r.na) return '<div class="trans-block"><div class="trans-label">'+r.label+'</div><div class="trans-na">No disponible en tu cuenta de API.Bible.</div></div>';
+      var idn=(r.label==='TBI'||r.label==='BIMK');
+      return '<div class="trans-block"><div class="trans-label">'+r.label+'</div><div class="trans-text'+(idn?' idn':'')+'">'+r.text+'</div></div>';
     }).join('');
   });
 }
@@ -532,7 +563,7 @@ function callTutor(word,morphParts,uhgContext){
   var transAreaEl = document.getElementById('transArea');
   var transContext = transAreaEl ? transAreaEl.innerText.trim() : '';
 
-  var system="Eres Mevin, tutor experto en hebreo biblico (AT), linguistica semitica y exegesis del texto masoretico (WLC). Tienes acceso al unfoldingWord Hebrew Grammar (UHG) y al Gesenius Hebrew Grammar como fuentes de referencia. Explicas en espanol de forma pedagogica, clara y concisa. Usas transliteracion cuando es util. Maximo 200 palabras. Parrafos cortos. Cuando cites el UHG o Gesenius, menciona la fuente brevemente.";
+  var system="Eres Mevin, tutor experto en hebreo biblico (AT), linguistica semitica y exegesis del texto masoretico (WLC). Tienes acceso al unfoldingWord Hebrew Grammar (UHG) y al Gesenius Hebrew Grammar como fuentes de referencia. Explicas en espanol de forma pedagogica, clara y concisa. Usas transliteracion cuando es util. Maximo 200 palabras. Parrafos cortos. Escribe en texto plano: no uses Markdown (nada de asteriscos, almohadillas ni guiones de lista). Cuando cites el UHG o Gesenius, menciona la fuente brevemente.";
 
   var user='Analiza esta palabra hebrea del texto biblico ('+context+'):\n\nPalabra: '+word.text+'\nCodigo morfologico OSHB: '+(word.morph||'no disponible')+'\nAnalisis decodificado: '+morphSummary+'\nStrong/Lexema: H'+word.lemma;
   if (transContext) user += '\n\nTraducciones del versiculo:\n'+transContext;
@@ -548,7 +579,7 @@ function callTutor(word,morphParts,uhgContext){
       var qrow=document.getElementById('questionRow');
       if(loading) loading.style.display='none';
       if(content){
-        content.innerHTML=text.split('\n').filter(function(l){ return l.trim(); }).map(function(l){ return '<p>'+l+'</p>'; }).join('');
+        content.innerHTML=renderMd(text);
         content.style.display='block';
       }
       if(qrow) qrow.style.display='flex';
@@ -575,17 +606,46 @@ function askFollowUp(){
   var word=idx>=0?currentWords[idx]:null;
   var ctx = word ? ('La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+(currentRef?currentRef.display:'')+' '+(currentRef?currentRef.ch:'')+':'+(currentRef?currentRef.vs:'')+'.') : '';
 
-  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system:'Eres Mevin, tutor experto en hebreo biblico. Responde en espanol, max 150 palabras, pedagogico y directo. Puedes citar el UHG o Gesenius si es relevante.',messages:[{role:'user',content:ctx+'\n\nPregunta: '+q}]})})
+  fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({max_tokens:1000,system:'Eres Mevin, tutor experto en hebreo biblico. Responde en espanol, max 150 palabras, pedagogico y directo. Escribe en texto plano, sin Markdown. Puedes citar el UHG o Gesenius si es relevante.',messages:[{role:'user',content:ctx+'\n\nPregunta: '+q}]})})
     .then(function(resp){ return resp.json(); })
     .then(function(data){
       var text = (data.content && data.content[0] && data.content[0].text) || ('Error: ' + ((data.error && (data.error.message || data.error)) || 'respuesta vacia'));
       var el=document.getElementById('followLoading');
-      if(el) el.outerHTML='<p style="padding:4px 0 0">'+text+'</p>';
+      if(el) el.outerHTML='<div style="padding:4px 0 0">'+renderMd(text)+'</div>';
     })
     .catch(function(e){
       var el=document.getElementById('followLoading');
       if(el) el.outerHTML='<p style="color:#a32d2d;font-size:13px">Error: '+e.message+'</p>';
     });
+}
+
+function escHtml(x){ return x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function inlineMd(x){
+  return x
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/__(.+?)__/g,'<strong>$1</strong>')
+    .replace(/(^|[^*])\*(?!\s)(.+?)\*(?!\*)/g,'$1<em>$2</em>')
+    .replace(/`([^`]+)`/g,'<em>$1</em>');
+}
+function renderMd(text){
+  var lines=escHtml(text||'').split('\n'), out=[], list=null;
+  function closeList(){ if(list){ out.push('</'+list+'>'); list=null; } }
+  lines.forEach(function(raw){
+    var l=raw.trim();
+    if(!l){ closeList(); return; }
+    if(/^(-{3,}|\*{3,}|_{3,})$/.test(l)){ closeList(); return; }
+    var h=l.match(/^#{1,6}\s+(.*)$/);
+    if(h){ closeList(); out.push('<p><strong>'+inlineMd(h[1])+'</strong></p>'); return; }
+    var ul=l.match(/^[-*•]\s+(.*)$/), ol=l.match(/^\d+[.)]\s+(.*)$/);
+    if(ul||ol){
+      var t=ul?'ul':'ol';
+      if(list!==t){ closeList(); out.push('<'+t+' style="margin:0 0 8px 20px">'); list=t; }
+      out.push('<li>'+inlineMd((ul||ol)[1])+'</li>'); return;
+    }
+    closeList(); out.push('<p>'+inlineMd(l)+'</p>');
+  });
+  closeList();
+  return out.join('');
 }
 
 function quickLoad(r){ document.getElementById('refInput').value=r; loadVerse(r); }
