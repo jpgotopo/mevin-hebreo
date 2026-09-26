@@ -21,6 +21,7 @@ export default async (req) => {
   }
   try {
     const body = await req.json();
+    body.model = Netlify.env.get("ANTHROPIC_MODEL") || "claude-sonnet-5";
     const upstream = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
