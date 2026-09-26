@@ -387,12 +387,17 @@ function renderMd(text){
 function callClaude(system,user,maxTokens){
   return fetch('/api/claude-tutor',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({max_tokens:maxTokens||1000,system:system,messages:[{role:'user',content:user}]})})
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      var txt=data&&data.content&&data.content[0]&&data.content[0].text;
-      if(txt) return txt;
-      var err=(data&&data.error&&(data.error.message||data.error))||t('emptyResp');
-      throw new Error(typeof err==='string'?err:JSON.stringify(err));
+    .then(function(r){
+      return r.text().then(function(raw){
+        var data=null; try{ data=JSON.parse(raw); }catch(e){}
+        if(!data) throw new Error('HTTP '+r.status+': '+raw.slice(0,200));
+        // Unir todos los bloques de texto (puede haber bloques de otro tipo antes del texto)
+        var txt=(Array.isArray(data.content)?data.content:[]).filter(function(b){ return b&&b.text&&(!b.type||b.type==='text'); }).map(function(b){ return b.text; }).join('\n\n').trim();
+        if(txt) return txt;
+        var err=data.error&&(data.error.message||data.error);
+        if(!err) err=t('emptyResp')+' (HTTP '+r.status+(data.stop_reason?', stop_reason: '+data.stop_reason:'')+') '+raw.slice(0,200);
+        throw new Error(typeof err==='string'?err:JSON.stringify(err));
+      });
     });
 }
 
@@ -688,7 +693,7 @@ function callTutor(word,morphParts,uhgContext,seq){
     if(uhgContext) user+='\n\n--- EXTRACTO DEL unfoldingWord Hebrew Grammar (UHG) ---\n'+uhgContext.slice(0,3000)+'\n---';
     user+='\n\nExplica categoría gramatical, forma, significado en contexto y una observación exegética relevante. Donde sea pertinente, integra información del UHG y compara con la KJV y la RVR60.';
   }
-  callClaude(tutorSystem(false),user,1000)
+  callClaude(tutorSystem(false),user,2000)
     .then(function(text){ showTutor(renderMd(text),seq); })
     .catch(function(e){ showTutor('<p style="color:#a32d2d;font-size:13px">'+escHtml(t('noExpl')+e.message)+'</p>',seq); });
 }
@@ -710,7 +715,7 @@ function askFollowUp(){
   var ctx=word?(LANG==='id'
     ? 'Kata yang dibahas adalah "'+word.text+'" (morf: '+word.morph+', H'+word.lemma+') dalam '+refText(currentRef)+'.'
     : 'La palabra es "'+word.text+'" (morph: '+word.morph+', H'+word.lemma+') en '+refText(currentRef)+'.'):'';
-  callClaude(tutorSystem(true),ctx+'\n\n'+(LANG==='id'?'Pertanyaan: ':'Pregunta: ')+q,800)
+  callClaude(tutorSystem(true),ctx+'\n\n'+(LANG==='id'?'Pertanyaan: ':'Pregunta: ')+q,1500)
     .then(function(text){ var el=document.getElementById(holderId); if(el&&seq===analysisSeq){ el.className=''; el.innerHTML=renderMd(text); } })
     .catch(function(e){ var el=document.getElementById(holderId); if(el){ el.className=''; el.innerHTML='<p style="color:#a32d2d;font-size:13px">'+escHtml(t('connErr')+e.message)+'</p>'; } });
 }
